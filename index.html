@@ -3,40 +3,63 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>FeedOS™ — Certification Intelligence Demo</title>
+  <title>FeedOS™ — The AI Platform for Sustainable Protein Farming</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <style>
-    :root { --bg:#f7f8fa; --fg:#111; --muted:#667085; --card:#fff; --accent:#0ea5e9; }
-    * { box-sizing: border-box; }
-    body { margin:0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto; background: var(--bg); color: var(--fg);}
-    header { padding: 28px 24px; border-bottom: 1px solid #e5e7eb; background:#fff; position:sticky; top:0; z-index:5;}
-    .brand { font-family: 'EB Garamond', serif; font-size: 28px; font-weight:700; }
-    .container { max-width: 1100px; margin: 0 auto; padding: 24px; }
-    .grid { display: grid; grid-template-columns: 1.5fr 1.5fr; gap: 20px; }
-    .card { background: var(--card); border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.06); padding: 18px 18px; }
-    .kpis { display:grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
-    .kpi { background:#fff; border-radius:14px; padding:16px; border:1px solid #eef; }
-    .kpi .label { color:var(--muted); font-size:12px; }
-    .kpi .value { font-weight:700; font-size:20px; margin-top:4px; }
-    .muted { color: var(--muted);}
-    .pill { display:inline-block; padding:4px 10px; border-radius:999px; background:#e0f2fe; color:#0369a1; font-weight:600; font-size:12px; }
-    .row { display:flex; align-items:center; justify-content:space-between; gap:12px; }
-    a.cta { text-decoration:none; background:var(--accent); color:#fff; padding:10px 14px; border-radius:10px; font-weight:600; }
-    code { background:#f3f4f6; padding:2px 6px; border-radius:6px; }
+    /* Brand Palette */
+    :root{
+      --primary:#204F32;          /* Primary Green */
+      --accent:#8BF35A;           /* Accent Lime */
+      --secondary:#2E7D50;        /* Secondary Deep Green */
+      --text:#22302A;             /* Core Text Color */
+      --muted:#5A6B62;            /* Grey-Green */
+      --bg:#F4F7F5;               /* Background Base */
+      --card:#fff;
+      --shadow:0 8px 30px rgba(0,0,0,.06);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto;background:var(--bg);color:var(--text)}
+    header{padding:18px 0;border-bottom:1px solid #e7ece9;background:#fff;position:sticky;top:0;z-index:10}
+    .container{max-width:1100px;margin:0 auto;padding:0 20px}
+    .brandwrap{display:flex;gap:12px;align-items:center}
+    .brandwrap img{width:40px;height:40px;border-radius:10px}
+    .brandtitle{display:flex;flex-direction:column}
+    .brandtitle .name{font-family:'EB Garamond',serif;font-weight:700;font-size:24px;color:var(--primary);letter-spacing:.2px}
+    .brandtitle .tag{color:var(--muted);font-size:12.5px}
+    .actions{display:flex;gap:10px}
+    a.cta{appearance:none;text-decoration:none;background:var(--secondary);color:#fff;padding:10px 14px;border-radius:10px;font-weight:600;border:1px solid #1e5c3b}
+    a.cta.alt{background:var(--primary)}
+    main.container{padding:22px 20px}
+    .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+    .kpi{background:#fff;border-radius:14px;padding:14px 16px;border:1px solid #e5eee9;box-shadow:var(--shadow)}
+    .kpi .label{color:var(--muted);font-size:12px}
+    .kpi .value{font-weight:700;font-size:20px;margin-top:4px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .card{background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:18px;border:1px solid #e5eee9}
+    .row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .pill{display:inline-block;padding:4px 10px;border-radius:999px;background:#e6f7ea;color:var(--primary);font-weight:600;font-size:12px;border:1px solid #cdebd7}
+    footer{margin:26px 0 10px;color:var(--muted);font-size:12px;text-align:center}
+    @media (max-width:860px){
+      .kpis{grid-template-columns:1fr 1fr}
+      .grid{grid-template-columns:1fr}
+    }
   </style>
 </head>
 <body>
   <header>
-    <div class="container row">
-      <div>
-        <div class="brand">FeedOS™</div>
-        <div class="muted" style="margin-top:4px;">Certification Intelligence Demo — Telemetry → QR Dossier</div>
+    <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+      <div class="brandwrap">
+        <img src="./assets/logo.png" alt="FeedOS logo" />
+        <div class="brandtitle">
+          <div class="name">FeedOS™</div>
+          <div class="tag">The AI Platform for Sustainable Protein Farming</div>
+        </div>
       </div>
-      <div class="row" style="gap:8px;">
+      <div class="actions">
         <a class="cta" href="./claim.html?token=clm_demo_001">View QR Outcome</a>
-        <a class="cta" href="./dossier/claim_clm_demo_001.json" target="_blank">View JSON API</a>
+        <a class="cta alt" href="./dossier/claim_clm_demo_001.json" target="_blank">View JSON API</a>
       </div>
     </div>
   </header>
@@ -51,50 +74,52 @@
 
     <div class="grid">
       <div class="card">
-        <div class="row"><h3>Temperature (°C)</h3><span class="pill">Sensor: dev-001</span></div>
+        <div class="row"><h3 style="margin:0;color:var(--primary);font-family:'EB Garamond',serif">Temperature (°C)</h3><span class="pill">Sensor: dev-001</span></div>
         <canvas id="tempChart" height="180"></canvas>
       </div>
       <div class="card">
-        <div class="row"><h3>Relative Humidity (%)</h3><span class="pill">Sensor: dev-001</span></div>
+        <div class="row"><h3 style="margin:0;color:var(--primary);font-family:'EB Garamond',serif">Relative Humidity (%)</h3><span class="pill">Sensor: dev-001</span></div>
         <canvas id="rhChart" height="180"></canvas>
       </div>
       <div class="card">
-        <div class="row"><h3>Ammonia NH₃ (ppm)</h3><span class="pill">Sensor: dev-001</span></div>
+        <div class="row"><h3 style="margin:0;color:var(--primary);font-family:'EB Garamond',serif">Ammonia NH₃ (ppm)</h3><span class="pill">Sensor: dev-001</span></div>
         <canvas id="nh3Chart" height="180"></canvas>
       </div>
       <div class="card">
-        <div class="row"><h3>CO₂ (ppm)</h3><span class="pill">Sensor: dev-001</span></div>
+        <div class="row"><h3 style="margin:0;color:var(--primary);font-family:'EB Garamond',serif">CO₂ (ppm)</h3><span class="pill">Sensor: dev-001</span></div>
         <canvas id="co2Chart" height="180"></canvas>
       </div>
     </div>
 
     <div class="card" style="margin-top:20px;">
       <div class="row">
-        <h3>How this demo maps to the Business Plan</h3>
+        <h3 style="margin:0;color:var(--primary);font-family:'EB Garamond',serif">About this Demo</h3>
         <span class="pill">Telemetry → FCS™ → Verification</span>
       </div>
-      <ol>
-        <li><strong>Edge/Cloud Telemetry</strong>: mock data stream persisted in <code>data/mock_telemetry.json</code>.</li>
-        <li><strong>Outcome Dossier (FCS™)</strong>: <code>dossier/claim_clm_demo_001.json</code> contains the QR-verifiable claim.</li>
-        <li><strong>Verification UI</strong>: <a href="./claim.html?token=clm_demo_001">QR page</a> renders batch details and signature status.</li>
+      <ol style="margin-top:8px;color:var(--muted)">
+        <li><strong style="color:var(--text)">Edge/Cloud Telemetry (mock)</strong>: data stream in <code>data/mock_telemetry.json</code>.</li>
+        <li><strong style="color:var(--text)">Outcome Dossier (FCS™)</strong>: <code>dossier/claim_clm_demo_001.json</code> with demo signature.</li>
+        <li><strong style="color:var(--text)">Verification UI</strong>: <a href="./claim.html?token=clm_demo_001">QR page</a> renders batch details & validity.</li>
       </ol>
     </div>
+    <footer>
+      Demo for Business Finland Evaluation (Oct 2025). Palette: Primary #204F32, Accent #8BF35A.
+    </footer>
   </main>
 
   <script>
-    async function main() {
+    async function main(){
       const res = await fetch('./data/mock_telemetry.json');
       const data = await res.json();
       const pts = data.points;
       const labels = pts.map(p => new Date(p.ts_utc));
       const temp = pts.map(p => p.metrics.temp_c);
-      const rh = pts.map(p => p.metrics.rh_pct);
-      const nh3 = pts.map(p => p.metrics.nh3_ppm);
-      const co2 = pts.map(p => p.metrics.co2_ppm);
+      const rh   = pts.map(p => p.metrics.rh_pct);
+      const nh3  = pts.map(p => p.metrics.nh3_ppm);
+      const co2  = pts.map(p => p.metrics.co2_ppm);
 
       document.getElementById('batchId').textContent = pts[0]?.batch_id ?? '—';
-      // Simple uptime model: mock missing = 2% → uptime 98%
-      const uptime = 98 + Math.random()*1.2 - 0.6; 
+      const uptime = 98.0 + Math.random()*1.0; // demo
       document.getElementById('uptime').textContent = uptime.toFixed(1) + '%';
       const avgCo2 = co2.reduce((a,b)=>a+b,0)/co2.length;
       const peakNh3 = Math.max(...nh3);
@@ -103,32 +128,20 @@
 
       const common = {
         type:'line',
-        options: {
-          responsive:true,
-          animation:false,
-          scales: {
-            x: { ticks: { maxTicksLimit: 6 }, type:'time', time:{ unit:'hour' } },
+        options:{
+          responsive:true, animation:false,
+          scales:{
+            x:{ ticks:{ maxTicksLimit:6 }, type:'time', time:{ unit:'hour' } }
           },
-          plugins: { legend: { display:false } }
+          plugins:{ legend:{ display:false } },
+          elements:{ point:{ radius:0 } }
         }
       };
 
-      new Chart(document.getElementById('tempChart'), {
-        ...common,
-        data: { labels, datasets:[{ data: temp }] }
-      });
-      new Chart(document.getElementById('rhChart'), {
-        ...common,
-        data: { labels, datasets:[{ data: rh }] }
-      });
-      new Chart(document.getElementById('nh3Chart'), {
-        ...common,
-        data: { labels, datasets:[{ data: nh3 }] }
-      });
-      new Chart(document.getElementById('co2Chart'), {
-        ...common,
-        data: { labels, datasets:[{ data: co2 }] }
-      });
+      new Chart(document.getElementById('tempChart'), { ...common, data:{ labels, datasets:[{ data: temp }] }});
+      new Chart(document.getElementById('rhChart'),   { ...common, data:{ labels, datasets:[{ data: rh }] }});
+      new Chart(document.getElementById('nh3Chart'),  { ...common, data:{ labels, datasets:[{ data: nh3 }] }});
+      new Chart(document.getElementById('co2Chart'),  { ...common, data:{ labels, datasets:[{ data: co2 }] }});
     }
     main();
   </script>
