@@ -3,32 +3,45 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>FeedOS™ — Claim Verification</title>
+  <title>FeedOS™ — Verification</title>
   <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
-    body { margin:0; font-family: Inter, system-ui; background:#f7f8fa; color:#111; }
-    .wrap { max-width: 720px; margin: 0 auto; padding: 24px; }
-    .card { background:#fff; border-radius:16px; box-shadow: 0 8px 30px rgba(0,0,0,.08); padding: 22px; }
-    h1 { font-family: 'EB Garamond', serif; font-size: 28px; margin: 0 0 8px; }
-    .grid { display:grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-    .muted { color:#667085; }
-    .ok { color:#047857; }
-    .badge { background:#dcfce7; color:#166534; padding:6px 10px; border-radius:999px; font-weight:700; font-size:12px; display:inline-block; }
-    code { background:#f3f4f6; padding:2px 6px; border-radius:6px; }
-    a { color:#0ea5e9; text-decoration:none; }
+    :root{
+      --primary:#204F32; --accent:#8BF35A; --secondary:#2E7D50;
+      --text:#22302A; --muted:#5A6B62; --bg:#F4F7F5; --card:#fff;
+      --shadow:0 8px 30px rgba(0,0,0,.08);
+    }
+    body{margin:0;font-family:Inter,system-ui;background:var(--bg);color:var(--text)}
+    .wrap{max-width:820px;margin:0 auto;padding:24px}
+    .card{background:#fff;border-radius:16px;box-shadow:var(--shadow);padding:22px;border:1px solid #e5eee9}
+    .brand{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+    .brand img{width:34px;height:34px;border-radius:8px}
+    h1{font-family:'EB Garamond',serif;font-size:28px;margin:0 0 8px;color:var(--primary)}
+    .grid{display:grid;grid-template-columns:280px 1fr;gap:22px}
+    .muted{color:var(--muted)}
+    .badge{background:#dcfce7;color:#166534;padding:6px 10px;border-radius:999px;font-weight:700;font-size:12px;display:inline-block;border:1px solid #b8f0c8}
+    code{background:#f3f4f6;padding:2px 6px;border-radius:6px}
+    a{color:var(--secondary);text-decoration:none}
+    footer{margin-top:14px;color:var(--muted);font-size:12px}
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="card">
-      <h1>FeedOS™ — Verification</h1>
-      <div id="status" class="badge">Loading…</div>
-      <p class="muted">Scan the QR code or use the API to validate this claim token.</p>
-      <div class="grid">
+      <div class="brand">
+        <img src="./assets/logo.png" alt="FeedOS logo"/>
         <div>
-          <div id="qrcode"></div>
+          <h1>FeedOS™ — Verification</h1>
+          <div class="muted">The AI Platform for Sustainable Protein Farming</div>
         </div>
+      </div>
+
+      <div id="status" class="badge">Loading…</div>
+      <p class="muted" style="margin-top:8px">Scan the QR code or use the API to validate this claim token.</p>
+
+      <div class="grid" style="margin-top:10px">
+        <div><div id="qrcode"></div></div>
         <div>
           <p><strong>Batch:</strong> <span id="batch">—</span></p>
           <p><strong>Nutrient Target:</strong> <span id="target">—</span></p>
@@ -40,9 +53,11 @@
           <p><strong>Signature:</strong> <code id="sig">—</code></p>
         </div>
       </div>
-      <p class="muted">This is a demo. Data are simulated for Business Finland submission.</p>
+
+      <footer>Demo for Business Finland Evaluation (Oct 2025). Data are simulated.</footer>
     </div>
   </div>
+
   <script>
     function getParam(name){ const u=new URLSearchParams(location.search); return u.get(name); }
     const token = getParam('token') || 'clm_demo_001';
@@ -61,10 +76,11 @@
       el.textContent = ok ? 'Signature Valid' : 'Invalid Signature';
       el.style.background = ok ? '#dcfce7' : '#fee2e2';
       el.style.color = ok ? '#166534' : '#991b1b';
-      const api = document.getElementById('api');
-      api.href = jsonUrl;
-    }).catch(e=>{
+      document.getElementById('api').href = jsonUrl;
+    }).catch(()=>{
       document.getElementById('status').textContent = 'Claim not found';
+      document.getElementById('status').style.background = '#fee2e2';
+      document.getElementById('status').style.color = '#991b1b';
     });
   </script>
 </body>
