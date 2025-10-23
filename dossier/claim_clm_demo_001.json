@@ -1,0 +1,13 @@
+{
+  "batch_id": "FEG-2026-001",
+  "nutrient_target": "Omega-3 \u2265 250 mg/egg",
+  "verified_result": 261,
+  "unit": "mg/egg",
+  "lab_id": "LIMS#9274",
+  "co2e_summary": 0.27,
+  "efsa_claim_ref": "EFSA/CLAIM/2025/07",
+  "issued_at": "2025-10-22T09:55:00Z",
+  "claim_token": "clm_demo_001",
+  "signature": "sig_demo_hmac_12345",
+  "valid_signature": true
+}
