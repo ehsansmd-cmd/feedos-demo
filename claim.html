@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>FeedOS™ — Claim Verification</title>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    body { margin:0; font-family: Inter, system-ui; background:#f7f8fa; color:#111; }
+    .wrap { max-width: 720px; margin: 0 auto; padding: 24px; }
+    .card { background:#fff; border-radius:16px; box-shadow: 0 8px 30px rgba(0,0,0,.08); padding: 22px; }
+    h1 { font-family: 'EB Garamond', serif; font-size: 28px; margin: 0 0 8px; }
+    .grid { display:grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .muted { color:#667085; }
+    .ok { color:#047857; }
+    .badge { background:#dcfce7; color:#166534; padding:6px 10px; border-radius:999px; font-weight:700; font-size:12px; display:inline-block; }
+    code { background:#f3f4f6; padding:2px 6px; border-radius:6px; }
+    a { color:#0ea5e9; text-decoration:none; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>FeedOS™ — Verification</h1>
+      <div id="status" class="badge">Loading…</div>
+      <p class="muted">Scan the QR code or use the API to validate this claim token.</p>
+      <div class="grid">
+        <div>
+          <div id="qrcode"></div>
+        </div>
+        <div>
+          <p><strong>Batch:</strong> <span id="batch">—</span></p>
+          <p><strong>Nutrient Target:</strong> <span id="target">—</span></p>
+          <p><strong>Verified Result:</strong> <span id="result">—</span></p>
+          <p><strong>CO₂e Summary:</strong> <span id="co2">—</span></p>
+          <p><strong>EFSA Ref:</strong> <span id="efsa">—</span></p>
+          <p><strong>Issued at:</strong> <span id="issued">—</span></p>
+          <p><strong>API:</strong> <a id="api" href="#" target="_blank">Open JSON</a></p>
+          <p><strong>Signature:</strong> <code id="sig">—</code></p>
+        </div>
+      </div>
+      <p class="muted">This is a demo. Data are simulated for Business Finland submission.</p>
+    </div>
+  </div>
+  <script>
+    function getParam(name){ const u=new URLSearchParams(location.search); return u.get(name); }
+    const token = getParam('token') || 'clm_demo_001';
+    const jsonUrl = `./dossier/claim_${token}.json`;
+    new QRCode(document.getElementById("qrcode"), window.location.href);
+    fetch(jsonUrl).then(r=>r.json()).then(d=>{
+      document.getElementById('batch').textContent = d.batch_id;
+      document.getElementById('target').textContent = d.nutrient_target + ' (' + d.unit + ')';
+      document.getElementById('result').textContent = d.verified_result + ' ' + d.unit;
+      document.getElementById('co2').textContent = d.co2e_summary + ' kg CO₂e/unit';
+      document.getElementById('efsa').textContent = d.efsa_claim_ref;
+      document.getElementById('issued').textContent = d.issued_at;
+      document.getElementById('sig').textContent = d.signature;
+      const ok = !!d.valid_signature;
+      const el = document.getElementById('status');
+      el.textContent = ok ? 'Signature Valid' : 'Invalid Signature';
+      el.style.background = ok ? '#dcfce7' : '#fee2e2';
+      el.style.color = ok ? '#166534' : '#991b1b';
+      const api = document.getElementById('api');
+      api.href = jsonUrl;
+    }).catch(e=>{
+      document.getElementById('status').textContent = 'Claim not found';
+    });
+  </script>
+</body>
+</html>
