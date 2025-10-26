@@ -2,6 +2,7 @@
   "cleanUrls": true,
   "rewrites": [
     { "source": "/", "destination": "/index.html" },
+    { "source": "/panel", "destination": "/panel/index.html" },
     { "source": "/claim", "destination": "/panel/claim.html" },
     { "source": "/claim.html", "destination": "/panel/claim.html" }
   ]
