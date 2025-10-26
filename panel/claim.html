@@ -27,6 +27,15 @@ footer{margin:12px 0 10px;text-align:center;color:var(--muted);font-size:12px}
 .qr{width:100%;max-width:300px}
 .right a{color:#065f46}
 </style>
+<script>
+// guard
+(function(){
+  if (sessionStorage.getItem('feedos_auth') !== '1') {
+    const next = location.pathname + location.search;
+    location.replace('/login.html?next=' + encodeURIComponent(next));
+  }
+})();
+</script>
 </head>
 <body>
 <div class="wrap">
@@ -53,7 +62,6 @@ footer{margin:12px 0 10px;text-align:center;color:var(--muted);font-size:12px}
 <footer><a href="/panel" style="text-decoration:none;color:#1f2937">← Back to panel</a></footer>
 
 <script>
-// --- helpers
 const qs = new URLSearchParams(location.search);
 const token = qs.get('token') || 'clm_demo_001';
 const jsonUrl = `/dossier/claim_${token}.json`;
@@ -63,31 +71,18 @@ const raw = document.getElementById('raw');
 const dl  = document.getElementById('download');
 const cp  = document.getElementById('copy');
 
-function setStatus(ok,msg){
-  statusEl.textContent = msg;
-  statusEl.className = 'badge ' + (ok?'ok':'err');
-}
+function setStatus(ok,msg){ statusEl.textContent = msg; statusEl.className = 'badge ' + (ok?'ok':'err'); }
 function kvRow(label,val){ return `<p><b>${label}:</b> ${val}</p>`; }
-function qrFor(url){
-  const api = `https://api.qrserver.com/v1/create-qr-code/?size=520x520&data=${encodeURIComponent(url)}`;
-  document.getElementById('qr').src = api;
-}
+function qrFor(url){ document.getElementById('qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=520x520&data=${encodeURIComponent(url)}`; }
 
-// --- signature check (موک)
 function checkMockSignature(d){
   const payload = `${d.batch_id}|${d.nutrient_target}|${d.verified_result}|${d.co2e_summary}`;
   const expected = '8a3e7f9b1c2d4e6f8a3e7f9b1c2d4e6f';
   return (payload === d.signature_payload && d.signature === expected);
 }
 
-// --- load dossier
-fetch(jsonUrl).then(r=>{
-  if(!r.ok) throw new Error('Dossier not found');
-  return r.json();
-}).then(d=>{
-  raw.href = jsonUrl;
-  dl.href  = jsonUrl;
-  cp.onclick = e=>{e.preventDefault(); navigator.clipboard.writeText(location.href);};
+fetch(jsonUrl).then(r=>{ if(!r.ok) throw new Error('Dossier not found'); return r.json(); }).then(d=>{
+  raw.href = jsonUrl; dl.href = jsonUrl; cp.onclick = e=>{e.preventDefault(); navigator.clipboard.writeText(location.href);};
 
   const valid = checkMockSignature(d);
   setStatus(valid,'Signature ' + (valid?'Valid — Machine-verifiable claim':'Invalid — Signature Mismatch'));
@@ -120,9 +115,7 @@ fetch(jsonUrl).then(r=>{
       `<p>API: <a href="${jsonUrl}" target="_blank">Open JSON</a></p>` +
       kvRow('Signature', d.signature);
   };
-}).catch(err=>{
-  setStatus(false,'Error: ' + err.message);
-});
+}).catch(err=>{ setStatus(false,'Error: ' + err.message); });
 </script>
 </body>
 </html>
