@@ -7,8 +7,8 @@
 
   <!-- Brand fonts -->
   <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <!-- Favicon (make sure assets/favicon.png exists) -->
-  <link rel="icon" type="image/png" href="./assets/favicon.png"/>
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="../assets/feedos-logo.png"/>
   <!-- QR generator -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
@@ -43,11 +43,22 @@
   </style>
 </head>
 <body>
+  <!-- Login gate -->
+  <script>
+    (function(){
+      const authed = localStorage.getItem('feedos_auth') === 'ok';
+      if(!authed){
+        const next = encodeURIComponent(location.pathname + location.search);
+        location.replace('/login.html?next=' + next);
+      }
+    })();
+  </script>
+
   <div class="wrap">
     <div class="card">
       <!-- Header -->
       <div class="brand">
-        <img src="./assets/logo.png" alt="FeedOS logo"/>
+        <img src="../assets/feedos-logo.png" alt="FeedOS logo"/>
         <div>
           <h1>FeedOS™ — Verification</h1>
           <div class="sub">The AI Platform for Sustainable Protein Farming</div>
@@ -74,9 +85,9 @@
 
           <div class="actions">
             <button id="tamperBtn" type="button">Simulate Tamper</button>
-            <a id="downloadBtn" class="btn ghost" href="./dossier/claim_clm_demo_001.json" download>Download JSON</a>
+            <a id="downloadBtn" class="btn ghost" href="../dossier/claim_clm_demo_001.json" download>Download JSON</a>
             <button id="copyLinkBtn" type="button" class="btn alt">Copy Link</button>
-            <a class="btn ghost" href="./dossier/claim_clm_demo_001.json" target="_blank" rel="noopener">View raw dossier</a>
+            <a class="btn ghost" href="../dossier/claim_clm_demo_001.json" target="_blank" rel="noopener">View raw dossier</a>
           </div>
         </div>
       </div>
@@ -89,22 +100,19 @@
   </div>
 
   <script>
-    /* ---- utilities ---- */
+    // helpers
     const qs = new URLSearchParams(location.search);
     const token = qs.get('token') || 'clm_demo_001';
-    const jsonUrl = `./dossier/claim_${token}.json`;
+    const jsonUrl = `../dossier/claim_${token}.json`; // << moved one level up
 
-    // QR for current page
     new QRCode(document.getElementById('qrcode'), window.location.href);
 
-    // status badge
     const STATUS = document.getElementById('status');
     function setStatus(ok, text){
       STATUS.textContent = text;
       STATUS.className = 'status ' + (ok ? 'ok' : 'bad');
     }
 
-    // demo-grade signature check
     function checkMockSignature(d){
       const expected = '8a3e7f9b1c2d4e6f8a3e7f9b1c2d4e6f';
       const payload  = `${d.batch_id}|${d.nutrient_target}|${d.verified_result}|${d.co2e_summary}`;
@@ -116,7 +124,7 @@
       if(!r.ok) throw new Error('Dossier not found');
       return r.json();
     }).then(d=>{
-      // fill fields
+      // fill
       document.getElementById('batch').textContent  = d.batch_id ?? '—';
       document.getElementById('target').textContent = d.nutrient_target ?? '—';
       document.getElementById('result').textContent = d.verified_result ?? '—';
@@ -127,28 +135,27 @@
       document.getElementById('sig').textContent    = d.signature ?? '—';
       document.getElementById('api').href           = jsonUrl;
 
-      // status
       const ok = checkMockSignature(d);
       setStatus(ok, ok ? 'Signature Valid — Machine-verifiable claim' : 'Signature Invalid');
 
       // actions
       document.getElementById('tamperBtn').onclick = () => {
-        document.getElementById('result').textContent = (d.verified_result || '—').replace(/\d+(\.\d+)?/, '999') + ' (Tampered)';
+        document.getElementById('result').textContent =
+          (d.verified_result || '—').replace(/\d+(\.\d+)?/, '999') + ' (Tampered)';
         setStatus(false, 'Data Tampered — Signature Mismatch');
       };
 
       document.getElementById('copyLinkBtn').onclick = async () => {
         try{
           await navigator.clipboard.writeText(window.location.href);
-          const prev = STATUS.textContent;
+          const prevOK = ok;
           setStatus(true, 'Link copied to clipboard');
-          setTimeout(()=> setStatus(ok, ok ? 'Signature Valid — Machine-verifiable claim' : 'Signature Invalid'), 1200);
+          setTimeout(()=> setStatus(prevOK, prevOK ? 'Signature Valid — Machine-verifiable claim' : 'Signature Invalid'), 1200);
         }catch(e){
           alert('Copy failed. You can copy the address bar manually.');
         }
       };
 
-      // set download href to current token
       document.getElementById('downloadBtn').href = jsonUrl;
 
     }).catch(err=>{
