@@ -14,7 +14,6 @@
       --muted:#6b8c7d;
       --brand:#2f6b4f;
       --brand-2:#e7f1ea;
-      --ring:rgba(47,107,79,.35);
       --shadow:0 10px 24px rgba(0,0,0,.06);
       --radius:16px;
     }
@@ -25,43 +24,24 @@
     }
     .wrap{max-width:1100px; margin:0 auto; padding:28px 20px 60px}
     /* header */
-    .nav{
-      position:sticky; top:0; z-index:10;
-      background:rgba(243,247,243,.85); backdrop-filter:saturate(140%) blur(8px);
-      border-bottom:1px solid #e5efe8;
-    }
+    .nav{position:sticky; top:0; z-index:10; background:rgba(243,247,243,.85); backdrop-filter:saturate(140%) blur(8px); border-bottom:1px solid #e5efe8;}
     .nav-inner{max-width:1100px; margin:0 auto; padding:14px 20px; display:flex; align-items:center; gap:14px}
     .brand{display:flex; align-items:center; gap:10px; font-weight:700; color:var(--ink); text-decoration:none}
     .brand img{width:26px; height:26px; border-radius:6px}
     .spacer{flex:1}
-    .menu a{
-      color:var(--ink); text-decoration:none; margin:0 10px; font-weight:600;
-      padding:8px 10px; border-radius:10px
-    }
+    .menu a{color:var(--ink); text-decoration:none; margin:0 10px; font-weight:600; padding:8px 10px; border-radius:10px}
     .menu a:hover{background:#eaf3ee}
-    .cta{
-      background:var(--brand); color:#fff; text-decoration:none; font-weight:700;
-      padding:10px 16px; border-radius:12px; box-shadow:var(--shadow)
-    }
+    .cta{background:var(--brand); color:#fff; text-decoration:none; font-weight:700; padding:10px 16px; border-radius:12px; box-shadow:var(--shadow)}
     .cta:hover{filter:brightness(.98)}
     /* hero */
-    .hero{
-      display:grid; gap:16px; grid-template-columns:1.1fr .9fr; align-items:center;
-      margin-top:22px;
-    }
-    .hero-card{
-      background:var(--panel); border-radius:var(--radius); padding:26px; box-shadow:var(--shadow);
-      border:1px solid #e7efe9;
-    }
+    .hero{display:grid; gap:16px; grid-template-columns:1.1fr .9fr; align-items:center; margin-top:22px;}
+    .hero-card{background:var(--panel); border-radius:var(--radius); padding:26px; box-shadow:var(--shadow); border:1px solid #e7efe9;}
     h1{font-size:36px; line-height:1.15; margin:0 0 10px}
     .lead{color:var(--muted); font-size:18px}
     .badge{display:inline-block; font-size:12px; padding:6px 10px; border-radius:999px; background:var(--brand-2); color:var(--ink-soft); font-weight:700}
     /* grid */
     .grid{display:grid; gap:18px; grid-template-columns:repeat(2,1fr); margin-top:22px}
-    .card{
-      background:var(--panel); border-radius:var(--radius); padding:22px; box-shadow:var(--shadow);
-      border:1px solid #e7efe9; display:flex; flex-direction:column; gap:14px;
-    }
+    .card{background:var(--panel); border-radius:var(--radius); padding:22px; box-shadow:var(--shadow); border:1px solid #e7efe9; display:flex; flex-direction:column; gap:14px;}
     .card h3{margin:0; font-size:20px}
     .card p{margin:0; color:var(--muted)}
     .meta{display:flex; gap:8px; flex-wrap:wrap}
@@ -71,26 +51,14 @@
     .btn:hover{background:#f0f6f3}
     .btn-primary{background:var(--brand); color:#fff; border-color:transparent}
     .btn-primary:hover{filter:brightness(.98)}
-    .note{
-      margin-top:26px; color:var(--muted); text-align:center; font-size:14px
-    }
-    /* sections */
+    .note{margin-top:26px; color:var(--muted); text-align:center; font-size:14px}
     .section-title{margin:34px 0 12px; font-size:24px}
     .road{background:var(--panel); border-radius:var(--radius); padding:18px; border:1px solid #e7efe9; box-shadow:var(--shadow)}
     .road li{margin:.4rem 0}
-    /* footer mini */
     .foot{margin-top:36px; color:var(--muted); font-size:14px}
     .foot a{color:var(--ink-soft); text-decoration:none}
-    @media (max-width:900px){
-      .hero{grid-template-columns:1fr}
-      .grid{grid-template-columns:1fr}
-    }
-    /* tiny icon blocks */
-    .icon{
-      width:38px; height:38px; border-radius:10px; display:inline-grid; place-items:center; 
-      background:var(--brand-2); color:var(--brand); font-weight:900; border:1px solid #d9e8df;
-      box-shadow:0 6px 18px rgba(47,107,79,.12);
-    }
+    @media (max-width:900px){ .hero{grid-template-columns:1fr} .grid{grid-template-columns:1fr} }
+    .icon{width:38px; height:38px; border-radius:10px; display:inline-grid; place-items:center; background:var(--brand-2); color:var(--brand); font-weight:900; border:1px solid #d9e8df; box-shadow:0 6px 18px rgba(47,107,79,.12);}
   </style>
 </head>
 <body>
@@ -119,9 +87,9 @@
         <div class="badge">Verification-first platform for sustainable protein farming</div>
         <h1>Products</h1>
         <p class="lead">
-          FeedOS™ داده‌های مزرعه را به «مدرک قابل‌ممیزی» تبدیل می‌کند.  
-          از ایج‌ران‌تایم امن در مزرعه تا <b>Digital Twin & Evidence Compiler</b> در کلاود،
-          و در نهایت <b>Outcome Dossier</b> و <b>Verification API</b> برای خرده‌فروش و رگولاتور — همه‌چیز برای صدور سریع ادعای تغذیه‌ای/پایداری مطابق EFSA.
+          FeedOS™ turns farm telemetry into <b>auditable evidence</b>. From a secure edge runtime to a
+          <b>Digital Twin & Evidence Compiler</b>, and finally signed <b>Outcome Dossiers</b> and a
+          <b>Verification API</b> for retailers and regulators — aligned with EFSA guidance.
         </p>
       </div>
       <div class="hero-card">
@@ -129,12 +97,11 @@
           <span class="chip">EFSA-aligned</span>
           <span class="chip">Machine-verifiable claims</span>
           <span class="chip">Telemetry → Evidence</span>
-          <span class="chip">Retail & Export</span>
+          <span class="chip">Retail & Export readiness</span>
         </div>
         <p style="margin-top:8px;color:var(--muted)">
-          هر محصول یک بخش از «Certification Intelligence Layer» است:  
-          سیگنال‌ها جمع‌آوری می‌شوند، مدل می‌شوند، به پکیج شواهد دیجیتال تبدیل می‌شوند،  
-          و در نهایت به صورت QR/API قابل‌اعتبارسنجی در اختیار ذی‌نفعان قرار می‌گیرد.
+          Each product is a layer of the Certification Intelligence stack: signals are collected,
+          modeled, compiled into a digital evidence pack, then exposed via QR/API for instant validation.
         </p>
       </div>
     </div>
@@ -152,13 +119,14 @@
         </div>
         <h3>FeedOS Evidence Node</h3>
         <p>
-          ایج‌ران‌تایم امن برای جمع‌آوری تله‌متری از سنسورها/PLC/SCADA و بافر compliant.
-          داده‌ها پیش‌اعتبارسنجی می‌شوند (timestamps، تمامیت، محدوده‌ها) و سپس به صورت امن به کلاود ارسال می‌گردند تا زنجیرهٔ شواهد گسسته نشود.
+          A hardened edge runtime to acquire telemetry from sensors/PLC/SCADA with compliant buffering.
+          Data is pre-validated (timestamps, integrity, bounds) and signed at source before being sent
+          to the cloud — preserving the chain of evidence.
         </p>
         <ul class="note" style="text-align:left">
-          <li>پروتکل‌های صنعتی و IoT (Modbus, MQTT, REST)</li>
-          <li>Health checks + local buffering برای قطعی شبکه</li>
-          <li>امضای دیجیتال بسته‌های داده در مبدأ</li>
+          <li>Industrial & IoT protocols (Modbus, MQTT, REST)</li>
+          <li>Health checks and local buffering for network outages</li>
+          <li>Digital signing of data packets at the origin</li>
         </ul>
         <div class="actions">
           <a class="btn-primary btn" href="/login">See live panel</a>
@@ -175,14 +143,14 @@
         </div>
         <h3>Digital Twin & Evidence Compiler</h3>
         <p>
-          موتورهای <b>Outcome Prediction</b> و <b>Optimization</b> با استفاده از فرمولاسیون خوراک، تله‌متری محیطی و نتایج آزمایشگاهی،
-          عملکرد تغذیه‌ای (مثلاً امگا-۳) و اثرات پایداری (CO₂e) را مدل و پیش‌بینی می‌کنند.  
-          خروجی، «Pre-Dossier» استانداردشده برای صدور Claim است.
+          Outcome prediction and optimization engines combine feed formulation, environmental telemetry,
+          and lab assays to model nutrition outcomes (e.g., Omega-3) and sustainability (CO₂e).
+          The output is a standardized <em>pre-dossier</em> ready for claim issuance.
         </p>
         <ul class="note" style="text-align:left">
-          <li>Linear/Stochastic Optimization با قیود هزینه/سیرکولاریتی/رفاه</li>
-          <li>Closed-loop learning با فیدبک assays</li>
-          <li>Traceable feature lineage برای ممیزی</li>
+          <li>Linear/Stochastic optimization with cost/circularity/welfare constraints</li>
+          <li>Closed-loop learning with assay feedback</li>
+          <li>Traceable feature lineage for audits</li>
         </ul>
         <div class="actions">
           <a class="btn" href="/products">Technical brief</a>
@@ -199,13 +167,14 @@
         </div>
         <h3>Outcome Dossier & QR</h3>
         <p>
-          برای هر بچ، یک «Outcome Dossier» امضاشده (FCS™) تولید می‌شود که شامل payload ادعا، زنجیرهٔ تله‌متری و امضای دیجیتال است.  
-          خرده‌فروش یا ممیز با اسکن QR یا باز کردن JSON، اعتبار ادعا را فوری می‌سنجد.
+          For each batch, FeedOS produces a digitally-signed Outcome Dossier (FCS™) that includes the
+          claim payload, telemetry lineage, and cryptographic signature. A retailer or auditor can
+          validate instantly via QR or open JSON.
         </p>
         <ul class="note" style="text-align:left">
           <li>Machine-verifiable JSON + human-friendly view</li>
-          <li>Tamper simulation برای آموزش تیم‌ها</li>
-          <li>لینک مستقیم از پنل عملیات</li>
+          <li>Tamper simulation for training and QA</li>
+          <li>Deep-link from the operations panel</li>
         </ul>
         <div class="actions">
           <a class="btn-primary btn" href="/panel/claim.html?token=clm_demo_001">View sample claim</a>
@@ -222,13 +191,13 @@
         </div>
         <h3>Verification API</h3>
         <p>
-          API سبک برای اعتبارسنجی بلادرنگ ادعاها در سیستم‌های خرده‌فروشی، مارکت‌پلیس‌ها و گمرک/رگولاتوری.
-          با ارسال <code>claim_token</code> نتیجهٔ «valid / invalid / tampered» برمی‌گردد.
+          A lightweight API to validate claims in retail systems, marketplaces, and customs/regulatory
+          workflows. Send a <code>claim_token</code> and receive <em>valid / invalid / tampered</em>.
         </p>
         <ul class="note" style="text-align:left">
-          <li>Rate-limited & auditable</li>
-          <li>Webhook برای eventing (e.g., shelf label update)</li>
-          <li>SDKs سبک (JS / Python)</li>
+          <li>Rate-limited and auditable</li>
+          <li>Webhooks for eventing (e.g., shelf label updates)</li>
+          <li>SDKs (JS / Python) coming soon</li>
         </ul>
         <div class="actions">
           <a class="btn" href="/contact">Get API access</a>
@@ -238,17 +207,19 @@
 
     </div>
 
-    <!-- roadmap / differentiation -->
+    <!-- differentiation -->
     <h2 class="section-title">Why FeedOS™</h2>
     <div class="road">
       <ul>
-        <li><b>Certification Intelligence, نه یک داشبورد مانیتورینگ:</b> تمرکز روی تولید «مدرک» قابل‌اعتبارسنجی برای صادرات و خرده‌فروشی.</li>
-        <li><b>Telemetry → Evidence → Claim:</b> زنجیرهٔ انتهابه‌انتها با امضای دیجیتال و قابلیت ممیزی.</li>
-        <li><b>Ready for Circular Feed™:</b> هم‌سویی با EFSA و استانداردهای اتحادیه اروپا برای ادعاهای تغذیه‌ای و پایداری.</li>
+        <li><b>Certification intelligence, not just dashboards:</b> purpose-built for evidence and claim issuance for export and retail.</li>
+        <li><b>Telemetry → Evidence → Claim:</b> end-to-end chain with digital signatures and auditability.</li>
+        <li><b>Ready for Circular Feed™:</b> aligned with EFSA and EU guidance on nutrition & sustainability claims.</li>
       </ul>
     </div>
 
-    <p class="note">برای همکاری تجاری یا سؤالات فنی: <a href="mailto:Ehsan.smd@gmail.com">Ehsan.smd@gmail.com</a></p>
+    <p class="note">
+      Business & technical inquiries: <a href="mailto:Ehsan.smd@gmail.com">Ehsan.smd@gmail.com</a>
+    </p>
 
     <div class="foot">
       <a href="/">Home</a> · <a href="/about">About</a> · <a href="/contact">Contact</a> · <a href="/login">Login</a>
