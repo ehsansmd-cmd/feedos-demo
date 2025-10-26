@@ -1,0 +1,11 @@
+{
+  "batches": [
+    {
+      "token": "clm_demo_001",
+      "batch_id": "FEG-2026-001",
+      "telemetry_json": "data/mock_telemetry.json",
+      "dossier_json": "dossier/claim_clm_demo_001.json",
+      "sensor_id": "dev-001"
+    }
+  ]
+}
