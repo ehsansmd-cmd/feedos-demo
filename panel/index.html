@@ -5,194 +5,159 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>FeedOS™ — Panel Dashboard</title>
   <link rel="icon" href="../assets/logo.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    :root{
-      --green:#204F32; --accent:#8BF35A;
-      --bg:#F3F7F3; --panel:#ffffff; --muted:#5c6b62;
-      --chip:#e7efe9;
+    :root {
+      --green:#204F32; --bg:#F4F7F4; --text:#1b3529; --muted:#607165;
     }
-    *{box-sizing:border-box}
-    body{margin:0;background:#eef3ef;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Ubuntu,Arial,"Apple Color Emoji","Segoe UI Emoji";}
-    header{position:sticky;top:0;z-index:10;background:#f1f6f3;border-bottom:1px solid rgba(0,0,0,.06)}
-    .wrap{max-width:1200px;margin:0 auto;padding:16px}
-    .row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-    .brand{display:flex;align-items:center;gap:10px;color:var(--green);font-weight:700;font-size:20px}
-    .brand img{width:28px;height:28px;border-radius:8px}
-    .spacer{flex:1}
-    .btn{background:var(--green);color:#fff;border:0;padding:10px 14px;border-radius:10px;font-weight:600;cursor:pointer}
-    .btn.ghost{background:#e6efe9;color:var(--green)}
-    .btn:hover{opacity:.92}
-    .pill{background:#e7efe9;color:#355545;border-radius:999px;padding:6px 10px;font-size:12px}
-    main{max-width:1200px;margin:20px auto;padding:0 16px}
-    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-    .tile{background:#fff;border-radius:18px;box-shadow:0 4px 20px rgba(0,0,0,.06);padding:20px}
-    .kpi{font-size:15px;color:#466056;font-weight:600}
-    .kpi .val{display:block;font-size:28px;color:#12241a;font-weight:800;margin-top:6px}
-    .card{background:#fff;border-radius:18px;box-shadow:0 4px 20px rgba(0,0,0,.06);padding:18px}
-    .card h3{margin:0 0 8px 0;color:#1b3529}
-    .badge{font-size:12px;background:var(--chip);color:#355545;border-radius:999px;padding:2px 8px}
-    .panel-footer{color:#5b6b61;text-align:center;margin:20px 0}
-    .select{appearance:none;border:1px solid #dbe5de;background:#fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 20 20"><path fill="%23506558" d="M5.5 7l4.5 5 4.5-5z"/></svg>') no-repeat right 10px center;border-radius:10px;padding:10px 34px 10px 12px;font-weight:600;color:#204f32}
-    @media(max-width:1024px){.grid{grid-template-columns:repeat(2,1fr)}}
-    @media(max-width:640px){.grid{grid-template-columns:1fr}}
+    body {
+      margin:0; font-family:'Inter',sans-serif; background:var(--bg);
+    }
+    header {
+      background:#f0f5f1; padding:12px 20px; display:flex; align-items:center;
+      border-bottom:1px solid #dce5de;
+    }
+    .brand {font-weight:700; color:var(--green); font-size:20px; display:flex; align-items:center; gap:8px;}
+    .brand img {width:28px; height:28px;}
+    .spacer {flex:1;}
+    main {max-width:1200px; margin:20px auto; padding:0 16px;}
+    .grid {display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px;}
+    .tile {
+      background:#fff; border-radius:16px; padding:16px;
+      box-shadow:0 3px 8px rgba(0,0,0,0.05);
+    }
+    .kpi {font-size:14px; color:var(--muted);}
+    .val {font-size:28px; font-weight:700; color:var(--text);}
+    .card {background:#fff; border-radius:16px; box-shadow:0 3px 8px rgba(0,0,0,0.05); padding:14px;}
+    h3 {margin:0 0 10px 0; color:var(--text);}
+    .badge {background:#edf3ee; color:var(--green); border-radius:999px; padding:2px 8px; font-size:12px;}
+    .topbar button {
+      background:#204F32; color:#fff; border:0; border-radius:8px; padding:8px 12px; margin-left:8px; cursor:pointer; font-weight:600;
+    }
+    .topbar select {
+      padding:8px; border-radius:8px; border:1px solid #ccc; font-weight:600; color:#204F32;
+    }
+    footer {text-align:center; margin:20px; color:#607165;}
   </style>
 </head>
 <body>
   <header>
-    <div class="wrap row">
-      <div class="brand"><img src="../assets/logo.png" alt="logo">FeedOS™</div>
-      <span class="pill">The AI Platform for Sustainable Protein Farming</span>
-      <div class="spacer"></div>
-
-      <!-- Batch selector -->
-      <label class="pill" style="background:#fff;border:1px solid #dbe5de">
-        <span style="margin-right:6px;color:#4b5f56">Batch:</span>
-        <select id="batchSelect" class="select"></select>
+    <div class="brand"><img src="../assets/logo.png" alt="logo">FeedOS™</div>
+    <div class="spacer"></div>
+    <div class="topbar">
+      <label>Batch:
+        <select id="batchSelect"></select>
       </label>
-
-      <button id="btnClaim" class="btn ghost">View QR Outcome</button>
-      <button id="btnJSON" class="btn ghost">View JSON API</button>
-      <button id="btnLogout" class="btn">Logout</button>
+      <button id="viewQR">View QR Outcome</button>
+      <button id="viewJSON">View JSON API</button>
+      <button id="logout">Logout</button>
     </div>
   </header>
 
   <main>
-    <div class="grid" style="margin-bottom:16px">
-      <div class="tile"><div class="kpi">Current Batch <span id="kpiBatch" class="val">—</span></div></div>
-      <div class="tile"><div class="kpi">Uptime (24h) <span class="val">99.8%</span></div></div>
-      <div class="tile"><div class="kpi">Avg CO₂ (ppm) <span id="kpiCO2" class="val">—</span></div></div>
-      <div class="tile"><div class="kpi">NH₃ Peak (ppm) <span id="kpiNH3" class="val">—</span></div></div>
+    <div class="grid">
+      <div class="tile"><div class="kpi">Current Batch <div class="val" id="kpiBatch">—</div></div></div>
+      <div class="tile"><div class="kpi">Uptime (24h) <div class="val">99.8%</div></div></div>
+      <div class="tile"><div class="kpi">Avg CO₂ (ppm) <div class="val" id="kpiCO2">—</div></div></div>
+      <div class="tile"><div class="kpi">NH₃ Peak (ppm) <div class="val" id="kpiNH3">—</div></div></div>
     </div>
 
-    <div class="grid">
+    <div class="grid" style="margin-top:20px;">
       <div class="card">
         <h3>Temperature (°C) <span id="chipTemp" class="badge">Sensor: —</span></h3>
-        <canvas id="cTemp" height="220"></canvas>
+        <canvas id="chartTemp" height="200"></canvas>
       </div>
       <div class="card">
         <h3>Relative Humidity (%) <span id="chipHum" class="badge">Sensor: —</span></h3>
-        <canvas id="cHum" height="220"></canvas>
+        <canvas id="chartHum" height="200"></canvas>
       </div>
       <div class="card">
         <h3>Ammonia NH₃ (ppm) <span id="chipNH3" class="badge">Sensor: —</span></h3>
-        <canvas id="cNH3" height="220"></canvas>
+        <canvas id="chartNH3" height="200"></canvas>
       </div>
       <div class="card">
         <h3>CO₂ (ppm) <span id="chipCO2" class="badge">Sensor: —</span></h3>
-        <canvas id="cCO2" height="220"></canvas>
+        <canvas id="chartCO2" height="200"></canvas>
       </div>
     </div>
-
-    <div class="panel-footer">Demo for Business Finland — data are simulated.</div>
   </main>
 
+  <footer>Demo for Business Finland — data are simulated.</footer>
+
   <script>
-    // --- Auth guard (همون مدل قبلی) ---
     if (localStorage.getItem('feedos_auth') !== 'ok') {
       window.location.href = '/login';
     }
 
-    // Helpers
-    const $ = sel => document.querySelector(sel);
+    const $ = s => document.querySelector(s);
     const qs = new URLSearchParams(location.search);
-    const fmt = n => Number(n).toLocaleString();
 
-    // charts
     let charts = {};
-    const chartSetup = (ctx, ymin, ymax) => new Chart(ctx, {
+    const newChart = (ctx,label,color) => new Chart(ctx,{
       type:'line',
-      data:{labels:[1,2,3,4,5,6,7,8], datasets:[{data:[], tension:.35, pointRadius:3, borderWidth:2}]},
+      data:{labels:[1,2,3,4,5,6,7,8],datasets:[{label,data:[],borderColor:color,pointRadius:3,tension:.35}]},
       options:{
-        responsive:true, maintainAspectRatio:false,
+        responsive:true,maintainAspectRatio:false,
         scales:{
-          y:{min:ymin,max:ymax,grid:{color:'rgba(0,0,0,.06)'}},
+          y:{beginAtZero:false,grid:{color:'rgba(0,0,0,.07)'}},
           x:{grid:{display:false}}
         },
         plugins:{legend:{display:false}}
       }
     });
 
-    // state
-    let batches = [];
-    let current = null;
-    let timer = null;
+    charts.temp=newChart($('#chartTemp'),'Temp','#4b7a4a');
+    charts.hum=newChart($('#chartHum'),'Hum','#45886e');
+    charts.nh3=newChart($('#chartNH3'),'NH3','#527c6b');
+    charts.co2=newChart($('#chartCO2'),'CO2','#446f56');
 
-    // init UI
-    charts.temp = chartSetup($('#cTemp'), 20.5, 22.6);
-    charts.hum  = chartSetup($('#cHum'), 54.5, 58.0);
-    charts.nh3  = chartSetup($('#cNH3'), 7.0, 10.2);
-    charts.co2  = chartSetup($('#cCO2'), 880, 1060);
+    let batches=[],current=null,timer=null;
 
-    // load batches list
-    async function loadBatches() {
-      const res = await fetch('/data/batches.json');
-      if(!res.ok) throw new Error('Cannot load batches.json');
-      const json = await res.json();
-      batches = json.batches || [];
-      const sel = $('#batchSelect');
-      sel.innerHTML = batches.map(b => `<option value="${b.token}">${b.batch_id}</option>`).join('');
-      // choose from URL ?token=... or last selected or first
-      const tFromUrl = qs.get('token');
-      const saved = localStorage.getItem('feedos_selected_token');
-      const token = tFromUrl || saved || (batches[0] && batches[0].token);
-      sel.value = token;
-      setCurrentByToken(token);
-      sel.addEventListener('change', e => {
-        setCurrentByToken(e.target.value);
-      });
+    async function loadBatches(){
+      const r=await fetch('/data/batches.json');
+      const j=await r.json();
+      batches=j.batches||[];
+      const sel=$('#batchSelect');
+      sel.innerHTML=batches.map(b=>`<option value="${b.token}">${b.batch_id}</option>`).join('');
+      const token=qs.get('token')||localStorage.getItem('feedos_selected_token')||batches[0].token;
+      sel.value=token; setCurrent(token);
+      sel.onchange=e=>setCurrent(e.target.value);
     }
 
-    function setCurrentByToken(token){
-      const b = batches.find(x => x.token === token);
-      if(!b){ alert('Batch not found'); return; }
-      current = b;
-      localStorage.setItem('feedos_selected_token', token);
-      $('#kpiBatch').textContent = b.batch_id;
-      ['chipTemp','chipHum','chipNH3','chipCO2'].forEach(id => { $('#'+id).textContent = `Sensor: ${b.sensor_id}`; });
-      // buttons
-      $('#btnClaim').onclick = () => window.location.href = `/panel/claim.html?token=${encodeURIComponent(b.token)}`;
-      $('#btnJSON').onclick  = () => window.open(`/${b.dossier_json}`,'_blank');
-      // refresh loop
+    function setCurrent(token){
+      current=batches.find(b=>b.token===token);
+      if(!current) return alert('Batch not found');
+      localStorage.setItem('feedos_selected_token',token);
+      $('#kpiBatch').textContent=current.batch_id;
+      ['chipTemp','chipHum','chipNH3','chipCO2'].forEach(id=>$('#'+id).textContent=`Sensor: ${current.sensor_id}`);
+      $('#viewQR').onclick=()=>window.location.href=`/panel/claim.html?token=${encodeURIComponent(token)}`;
+      $('#viewJSON').onclick=()=>window.open(`/${current.dossier_json}`,'_blank');
       if(timer) clearInterval(timer);
-      loadTelemetry(); // once now
-      timer = setInterval(loadTelemetry, 7000); // every 7s
+      loadTelemetry(); timer=setInterval(loadTelemetry,7000);
     }
 
     async function loadTelemetry(){
       try{
-        const res = await fetch(`/${current.telemetry_json}?_t=${Date.now()}`);
-        if(!res.ok) throw new Error('telemetry fetch failed');
-        const j = await res.json();
-        const s = j.series || {};
-        // compute KPIs
-        const avg = arr => arr.reduce((a,b)=>a+b,0)/arr.length;
-        const peak = arr => Math.max(...arr);
-        $('#kpiCO2').textContent = fmt(Math.round(avg(s.co2)));
-        $('#kpiNH3').textContent = fmt(peak(s.nh3));
-
-        // charts data
-        charts.temp.data.datasets[0].data = s.temperature || [];
-        charts.hum .data.datasets[0].data = s.humidity || [];
-        charts.nh3 .data.datasets[0].data = s.nh3 || [];
-        charts.co2 .data.datasets[0].data = s.co2 || [];
-        Object.values(charts).forEach(c => c.update());
-      }catch(e){
-        alert('Could not load telemetry. Check data/mock_telemetry.json');
-      }
+        const r=await fetch(`/${current.telemetry_json}?_t=${Date.now()}`);
+        const j=await r.json(); const s=j.series;
+        const avg=a=>a.reduce((x,y)=>x+y,0)/a.length; const max=a=>Math.max(...a);
+        $('#kpiCO2').textContent=Math.round(avg(s.co2));
+        $('#kpiNH3').textContent=max(s.nh3).toFixed(1);
+        charts.temp.data.datasets[0].data=s.temperature;
+        charts.hum.data.datasets[0].data=s.humidity;
+        charts.nh3.data.datasets[0].data=s.nh3;
+        charts.co2.data.datasets[0].data=s.co2;
+        Object.values(charts).forEach(c=>{
+          const all=c.data.datasets[0].data;
+          c.options.scales.y.min=Math.min(...all)-1;
+          c.options.scales.y.max=Math.max(...all)+1;
+          c.update();
+        });
+      }catch(e){console.error(e);}
     }
 
-    // actions
-    $('#btnLogout').onclick = ()=>{
-      localStorage.removeItem('feedos_auth');
-      localStorage.removeItem('feedos_selected_token');
-      window.location.href='/login';
-    };
-
-    // go
+    $('#logout').onclick=()=>{localStorage.removeItem('feedos_auth');location.href='/login';};
     loadBatches();
   </script>
 </body>
