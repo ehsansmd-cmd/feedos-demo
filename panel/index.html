@@ -14,7 +14,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0
 .brand{display:flex;align-items:center;gap:10px}
 .brand img{width:36px;height:36px;border-radius:10px}
 .brand .name{font-family:'EB Garamond',serif;font-weight:700;font-size:22px;color:var(--primary)}
-.action a{margin-left:12px;background:var(--secondary);color:#fff;padding:8px 12px;border-radius:10px;text-decoration:none;font-weight:700}
+.action a,.action button{margin-left:12px;background:var(--secondary);color:#fff;padding:8px 12px;border-radius:10px;text-decoration:none;font-weight:700;border:0;cursor:pointer}
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:20px 0}
 .card{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);padding:16px}
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:10px}
@@ -23,6 +23,14 @@ footer{margin:18px 0 14px;text-align:center;color:var(--muted);font-size:12px}
 canvas{width:100%;height:280px}
 @media (max-width:900px){.grid{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}}
 </style>
+<script>
+// --- guard: require demo login
+(function(){
+  if (sessionStorage.getItem('feedos_auth') !== '1') {
+    location.replace('/login.html?next=' + encodeURIComponent(location.pathname));
+  }
+})();
+</script>
 </head>
 <body>
 <header>
@@ -32,7 +40,7 @@ canvas{width:100%;height:280px}
       <div class="action">
         <a href="/panel/claim.html?token=clm_demo_001">View QR Outcome</a>
         <a href="/dossier/claim_clm_demo_001.json">View JSON API</a>
-        <a href="/" style="background:#1f2937">Logout</a>
+        <button onclick="sessionStorage.removeItem('feedos_auth');location.href='/'">Logout</button>
       </div>
     </nav>
   </div>
@@ -58,32 +66,22 @@ canvas{width:100%;height:280px}
     <ol>
       <li><b>Edge/Cloud Telemetry (mock)</b>: <code>../data/mock_telemetry.json</code></li>
       <li><b>Outcome Dossier (FCS™)</b>: <code>../dossier/claim_clm_demo_001.json</code></li>
-      <li><b>Verification UI</b>: QR page renders batch details & validity (see button above).</li>
+      <li><b>Verification UI</b>: QR page renders batch details & validity.</li>
     </ol>
   </div>
 </main>
 
 <footer>Demo for Business Finland — data are simulated.</footer>
 
-<script>
-/* ساده: داده‌های موک برای دو چارت اول */
-const mock = [21.4,21.1,20.9,21.0,21.6,22.0,21.7,20.9,21.3,21.5,21.0];
-const hum  = [57.0,56.0,54.8,56.9,55.2,54.9,56.6,55.0,56.6,55.4];
-const nh3  = [7.8,8.2,9.0,7.2,8.6,9.1,7.8,8.3,7.9,8.8,7.4];
-const co2  = [910,980,860,1020,980,900,960,920,990,900,880];
-const labels = ['08:00','08:10','08:20','08:30','08:40','09:00','09:10','09:20','09:30','09:40','09:50'];
-
-function line(canvasId, data){
-  const c = document.getElementById(canvasId).getContext('2d');
-  new Chart(c,{type:'line',data:{labels,datasets:[{data,fill:false}]} ,options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:false}}}});
-}
-</script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-line('tChart', mock);
-line('hChart', hum);
-line('nChart', nh3);
-line('cChart', co2);
+const mock=[21.4,21.1,20.9,21.0,21.6,22.0,21.7,20.9,21.3,21.5,21.0];
+const hum=[57.0,56.0,54.8,56.9,55.2,54.9,56.6,55.0,56.6,55.4];
+const nh3=[7.8,8.2,9.0,7.2,8.6,9.1,7.8,8.3,7.9,8.8,7.4];
+const co2=[910,980,860,1020,980,900,960,920,990,900,880];
+const labels=['08:00','08:10','08:20','08:30','08:40','09:00','09:10','09:20','09:30','09:40','09:50'];
+function line(id,data){new Chart(document.getElementById(id).getContext('2d'),{type:'line',data:{labels,datasets:[{data,fill:false}]},options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:false}}}});}
+line('tChart',mock);line('hChart',hum);line('nChart',nh3);line('cChart',co2);
 </script>
 </body>
 </html>
