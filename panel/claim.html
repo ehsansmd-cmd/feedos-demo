@@ -162,5 +162,19 @@
       setStatus(false, 'Error: ' + err.message);
     });
   </script>
+<button id="logoutBtn" onclick="logout()" style="
+  position:fixed; top:14px; right:14px; z-index:9999;
+  background:#204F32; color:#fff; border:0; border-radius:10px;
+  padding:8px 12px; font-weight:700; box-shadow:0 6px 20px rgba(0,0,0,.1);
+">Logout</button>
 </body>
+  <script>
+  if (localStorage.getItem('feedos_auth') !== 'ok') {
+    location.href = '/login.html?next=' + encodeURIComponent(location.pathname + location.search);
+  }
+  function logout(){
+    localStorage.removeItem('feedos_auth');
+    location.href = '/login.html';
+  }
+</script>
 </html>
