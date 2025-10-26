@@ -7,9 +7,8 @@
   "issued_at": "2025-10-26T14:30:00Z",
 
   "signature_payload": "FEG-2026-001|261 mg/egg|0.27 kg CO2e/egg",
-
-  "data_hash": "31dd05629da17a0baeecac18d678a09b",
   "signature": "f0ab9257d78341056693b652cb1b1a2dc497993b178b60022fbc6301b2eabe50",
+  "integrity_hash": "31dd05629da17a0baeecac18d678a09b",
   "valid_signature": false,
   "signer": "FeedOS Labs Oy (Digital Feed Operator)",
 
