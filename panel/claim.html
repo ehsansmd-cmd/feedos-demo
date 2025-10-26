@@ -1,121 +1,141 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>FeedOS™ — Verification</title>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-<link rel="icon" type="image/png" href="/assets/logo.png"/>
-<style>
-:root{--primary:#204F32;--secondary:#2E7D50;--ok:#d1fae5;--err:#fee2e2;--text:#22302A;--muted:#5A6B62;--bg:#F4F7F5;--border:#e5eee9}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,system-ui;color:var(--text)}
-.wrap{max-width:980px;margin:22px auto;padding:0 18px}
-.card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:18px 18px 8px}
-.head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.head img{width:28px;height:28px;border-radius:6px}
-h1{font-family:'EB Garamond',serif;color:var(--primary);margin:4px 0 6px}
-.badge{display:inline-block;padding:6px 10px;border-radius:999px;font-weight:700;font-size:12px;margin:6px 0}
-.badge.ok{background:var(--ok);color:#065f46}
-.badge.err{background:var(--err);color:#991b1b}
-.grid{display:grid;grid-template-columns:300px 1fr;gap:18px}
-.kv p{margin:.35rem 0}
-.kv b{color:#0f172a}
-.btns{display:flex;gap:10px;margin:10px 0 6px}
-.btn{padding:8px 10px;border-radius:10px;border:1px solid #dfe7e2;background:#eef2ff;color:#1e3a8a;text-decoration:none}
-.btn.primary{background:var(--secondary);color:#fff;border-color:var(--secondary)}
-.note{margin:10px 0;color:var(--muted);font-size:12px}
-footer{margin:12px 0 10px;text-align:center;color:var(--muted);font-size:12px}
-.qr{width:100%;max-width:300px}
-.right a{color:#065f46}
-</style>
-<script>
-// guard
-(function(){
-  if (sessionStorage.getItem('feedos_auth') !== '1') {
-    const next = location.pathname + location.search;
-    location.replace('/login.html?next=' + encodeURIComponent(next));
-  }
-})();
-</script>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>FeedOS™ — Verification</title>
+  <link rel="icon" href="../assets/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <style>
+    :root{--green:#204F32;--bg:#eef3ef}
+    body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Ubuntu,Arial}
+    .wrap{max-width:900px;margin:28px auto;padding:0 16px}
+    .card{background:#fff;border-radius:18px;box-shadow:0 4px 20px rgba(0,0,0,.06);padding:22px}
+    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+    .brand{display:flex;align-items:center;gap:10px;color:var(--green);font-weight:800}
+    .brand img{width:26px;height:26px;border-radius:6px}
+    .status{display:inline-block;border-radius:999px;padding:7px 10px;font-size:12px;margin-top:8px}
+    .ok{background:#e6f4ea;color:#1a7f41}
+    .bad{background:#fde8e8;color:#b42318}
+    .row{display:grid;grid-template-columns:260px 1fr;gap:24px}
+    .btn{background:#e7efe9;color:#204F32;border:0;border-radius:10px;padding:10px 12px;font-weight:700;margin-right:8px;cursor:pointer}
+    .btn.primary{background:#204F32;color:#fff}
+    .back{margin-top:16px;color:#204F32}
+    .muted{color:#5c6b62}
+    code{background:#f4f5f7;border-radius:8px;padding:3px 6px}
+  </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="card">
-    <div class="head"><img src="/assets/logo.png"><h1>FeedOS™ — Verification</h1></div>
-    <div id="status" class="badge">Loading…</div>
-    <p style="margin-top:0;color:var(--muted)">Scan the QR or open the JSON to validate this claim token.</p>
+  <div class="wrap">
+    <div class="card">
+      <header>
+        <div class="brand"><img src="../assets/logo.png" alt="logo"> <span>FeedOS™ — Verification</span></div>
+        <button class="btn" onclick="location.href='/panel'">Back to panel</button>
+      </header>
 
-    <div class="grid">
-      <div><img id="qr" class="qr" alt="QR"></div>
-      <div class="right kv" id="kv"></div>
+      <div id="statusBox"></div>
+
+      <p class="muted">Scan the QR or open the JSON to validate this claim token.</p>
+
+      <div class="row" style="margin-top:14px">
+        <canvas id="qrc" width="240" height="240" style="background:#fff;border-radius:12px"></canvas>
+        <div id="details"></div>
+      </div>
+
+      <div style="margin-top:16px">
+        <button id="tamper" class="btn">Simulate Tamper</button>
+        <button id="download" class="btn">Download JSON</button>
+        <button id="copy" class="btn">Copy Link</button>
+        <a id="raw" class="btn" target="_blank">View raw dossier</a>
+      </div>
+
+      <div class="muted" style="margin-top:16px">FeedOS Claim Standard (FCS™) — digitally signed mock certificate for demonstration purposes. Demo — data are simulated.</div>
     </div>
-
-    <div class="btns">
-      <button class="btn primary" id="tamper">Simulate Tamper</button>
-      <a class="btn" id="download" href="#" download="claim.json">Download JSON</a>
-      <a class="btn" id="copy" href="#">Copy Link</a>
-      <a class="btn" id="raw" href="#" target="_blank">View raw dossier</a>
-    </div>
-
-    <div class="note">FeedOS Claim Standard (FCS™) — digitally signed mock certificate for demonstration purposes. Demo for Business Finland — data are simulated.</div>
   </div>
-</div>
-<footer><a href="/panel" style="text-decoration:none;color:#1f2937">← Back to panel</a></footer>
 
-<script>
-const qs = new URLSearchParams(location.search);
-const token = qs.get('token') || 'clm_demo_001';
-const jsonUrl = `/dossier/claim_${token}.json`;
-const statusEl = document.getElementById('status');
-const kv = document.getElementById('kv');
-const raw = document.getElementById('raw');
-const dl  = document.getElementById('download');
-const cp  = document.getElementById('copy');
+  <script>
+    // Simple auth gate (optional – می‌تونی برداری اگر نمی‌خوای الزام لاگین داشته باشه)
+    if (localStorage.getItem('feedos_auth') !== 'ok') {
+      window.location.href = '/login';
+    }
 
-function setStatus(ok,msg){ statusEl.textContent = msg; statusEl.className = 'badge ' + (ok?'ok':'err'); }
-function kvRow(label,val){ return `<p><b>${label}:</b> ${val}</p>`; }
-function qrFor(url){ document.getElementById('qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=520x520&data=${encodeURIComponent(url)}`; }
+    const qs = new URLSearchParams(location.search);
+    const token = qs.get('token') || localStorage.getItem('feedos_selected_token');
+    if(!token){ alert('Missing token'); location.href='/panel'; }
 
-function checkMockSignature(d){
-  const payload = `${d.batch_id}|${d.nutrient_target}|${d.verified_result}|${d.co2e_summary}`;
-  const expected = '8a3e7f9b1c2d4e6f8a3e7f9b1c2d4e6f';
-  return (payload === d.signature_payload && d.signature === expected);
-}
+    const $ = s => document.querySelector(s);
 
-fetch(jsonUrl).then(r=>{ if(!r.ok) throw new Error('Dossier not found'); return r.json(); }).then(d=>{
-  raw.href = jsonUrl; dl.href = jsonUrl; cp.onclick = e=>{e.preventDefault(); navigator.clipboard.writeText(location.href);};
+    async function loadBatchByToken(tok){
+      const r = await fetch('/data/batches.json');
+      const j = await r.json();
+      return (j.batches||[]).find(b => b.token===tok);
+    }
 
-  const valid = checkMockSignature(d);
-  setStatus(valid,'Signature ' + (valid?'Valid — Machine-verifiable claim':'Invalid — Signature Mismatch'));
+    async function load(){
+      const b = await loadBatchByToken(token);
+      if(!b){ alert('Unknown token'); location.href='/panel'; return; }
 
-  kv.innerHTML =
-    kvRow('Batch', d.batch_id) +
-    kvRow('Nutrient Target', d.nutrient_target) +
-    kvRow('Verified Result', d.verified_result + (valid?'':' (Tampered)')) +
-    kvRow('CO₂e Summary', d.co2e_summary) +
-    kvRow('EFSA Ref', d.efsa_claim_ref) +
-    kvRow('Issued at', d.issued_at) +
-    kvRow('Signer', d.signer) +
-    `<p>API: <a href="${jsonUrl}" target="_blank">Open JSON</a></p>` +
-    kvRow('Signature', d.signature);
+      // Load dossier
+      const r = await fetch('/'+b.dossier_json);
+      if(!r.ok){ alert('Cannot load dossier'); return; }
+      const d = await r.json();
 
-  qrFor(location.href);
+      // Status
+      const ok = !!d.valid_signature;
+      $('#statusBox').innerHTML =
+        `<span class="status ${ok?'ok':'bad'}">${ok?'Signature Valid — Machine-verifiable claim':'Signature Invalid — Signature Mismatch'}</span>`;
 
-  document.getElementById('tamper').onclick = ()=>{
-    d.verified_result = '999 mg/egg';
-    const ok = checkMockSignature(d);
-    setStatus(ok,'Signature ' + (ok?'Valid':'Invalid — Signature Mismatch'));
-    kv.innerHTML =
-      kvRow('Batch', d.batch_id) +
-      kvRow('Nutrient Target', d.nutrient_target) +
-      kvRow('Verified Result', d.verified_result + (ok?'':' (Tampered)')) +
-      kvRow('CO₂e Summary', d.co2e_summary) +
-      kvRow('EFSA Ref', d.efsa_claim_ref) +
-      kvRow('Issued at', d.issued_at) +
-      kvRow('Signer', d.signer) +
-      `<p>API: <a href="${jsonUrl}" target="_blank">Open JSON</a></p>` +
-      kvRow('Signature', d.signature);
-  };
-}).catch(err=>{ setStatus(false,'Error: ' + err.message); });
-</script>
+      // QR
+      const qrLink = `${location.origin}/panel/claim.html?token=${encodeURIComponent(token)}`;
+      const canvas = $('#qrc');
+      await QRCode.toCanvas(canvas, qrLink, {margin:1,width:240});
+
+      // Details
+      const lines = [
+        ['Batch:', d.batch_id],
+        ['Nutrient Target:', d.nutrient_target],
+        ['Verified Result:', d.verified_result + (ok ? '' : ' (Tampered)')],
+        ['CO₂e Summary:', d.co2_summary],
+        ['EFSA Ref:', d.efsa_claim_ref],
+        ['Issued at:', d.issued_at],
+        ['Signer:', d.signer]
+      ].map(([k,v])=>`<p><b>${k}</b> ${v}</p>`).join('');
+
+      $('#details').innerHTML = `
+        ${lines}
+        <p>API: <a href="/${b.dossier_json}" target="_blank">Open JSON</a></p>
+        <p>Signature: <code>${d.signature}</code></p>
+      `;
+
+      // Buttons
+      $('#raw').href = '/'+b.dossier_json;
+      $('#copy').onclick = async ()=>{ await navigator.clipboard.writeText(qrLink); alert('Link copied'); };
+
+      // Tamper simulation: فقط متن result را دستکاری می‌کنیم (سمت کلاینت)
+      let tampered = false;
+      $('#tamper').onclick = ()=>{
+        tampered = !tampered;
+        const el = $('#details');
+        if(tampered){
+          el.innerHTML = el.innerHTML.replace(d.verified_result, '999 mg/egg');
+          $('#statusBox').innerHTML = `<span class="status bad">Signature Invalid — Signature Mismatch</span>`;
+          $('#tamper').textContent = 'Revert';
+        }else{
+          load(); // ری‌لود امن
+        }
+      };
+
+      // Download JSON
+      $('#download').onclick = ()=>{
+        const a=document.createElement('a');
+        a.href='/'+b.dossier_json; a.download=b.dossier_json.split('/').pop();
+        a.click();
+      };
+    }
+    load();
+  </script>
 </body>
 </html>
