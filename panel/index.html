@@ -6,39 +6,25 @@
   <title>FeedOS™ — Panel Dashboard</title>
   <link rel="icon" href="../assets/logo.png">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
   <style>
-    :root {
-      --green:#204F32; --bg:#F4F7F4; --text:#1b3529; --muted:#607165;
-    }
-    body {
-      margin:0; font-family:'Inter',sans-serif; background:var(--bg);
-    }
-    header {
-      background:#f0f5f1; padding:12px 20px; display:flex; align-items:center;
-      border-bottom:1px solid #dce5de;
-    }
+    :root { --green:#204F32; --bg:#F4F7F4; --text:#1b3529; --muted:#607165; }
+    body { margin:0; font-family:'Inter',sans-serif; background:var(--bg); }
+    header { background:#f0f5f1; padding:12px 20px; display:flex; align-items:center; border-bottom:1px solid #dce5de; }
     .brand {font-weight:700; color:var(--green); font-size:20px; display:flex; align-items:center; gap:8px;}
     .brand img {width:28px; height:28px;}
     .spacer {flex:1;}
     main {max-width:1200px; margin:20px auto; padding:0 16px;}
     .grid {display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px;}
-    .tile {
-      background:#fff; border-radius:16px; padding:16px;
-      box-shadow:0 3px 8px rgba(0,0,0,0.05);
-    }
-    .kpi {font-size:14px; color:var(--muted);}
-    .val {font-size:28px; font-weight:700; color:var(--text);}
-    .card {background:#fff; border-radius:16px; box-shadow:0 3px 8px rgba(0,0,0,0.05); padding:14px;}
+    .tile { background:#fff; border-radius:16px; padding:16px; box-shadow:0 3px 8px rgba(0,0,0,.05); }
+    .kpi {font-size:14px; color:var(--muted);} .val {font-size:28px; font-weight:700; color:var(--text);}
+    .card {background:#fff; border-radius:16px; box-shadow:0 3px 8px rgba(0,0,0,.05); padding:14px; min-height:260px;}
     h3 {margin:0 0 10px 0; color:var(--text);}
     .badge {background:#edf3ee; color:var(--green); border-radius:999px; padding:2px 8px; font-size:12px;}
-    .topbar button {
-      background:#204F32; color:#fff; border:0; border-radius:8px; padding:8px 12px; margin-left:8px; cursor:pointer; font-weight:600;
-    }
-    .topbar select {
-      padding:8px; border-radius:8px; border:1px solid #ccc; font-weight:600; color:#204F32;
-    }
+    .topbar button { background:#204F32; color:#fff; border:0; border-radius:8px; padding:8px 12px; margin-left:8px; cursor:pointer; font-weight:600; }
+    .topbar select { padding:8px; border-radius:8px; border:1px solid #ccc; font-weight:600; color:#204F32; }
     footer {text-align:center; margin:20px; color:#607165;}
+    canvas {width:100% !important; height:200px !important;}
   </style>
 </head>
 <body>
@@ -66,19 +52,19 @@
     <div class="grid" style="margin-top:20px;">
       <div class="card">
         <h3>Temperature (°C) <span id="chipTemp" class="badge">Sensor: —</span></h3>
-        <canvas id="chartTemp" height="200"></canvas>
+        <canvas id="chartTemp"></canvas>
       </div>
       <div class="card">
         <h3>Relative Humidity (%) <span id="chipHum" class="badge">Sensor: —</span></h3>
-        <canvas id="chartHum" height="200"></canvas>
+        <canvas id="chartHum"></canvas>
       </div>
       <div class="card">
         <h3>Ammonia NH₃ (ppm) <span id="chipNH3" class="badge">Sensor: —</span></h3>
-        <canvas id="chartNH3" height="200"></canvas>
+        <canvas id="chartNH3"></canvas>
       </div>
       <div class="card">
         <h3>CO₂ (ppm) <span id="chipCO2" class="badge">Sensor: —</span></h3>
-        <canvas id="chartCO2" height="200"></canvas>
+        <canvas id="chartCO2"></canvas>
       </div>
     </div>
   </main>
@@ -86,78 +72,133 @@
   <footer>Demo for Business Finland — data are simulated.</footer>
 
   <script>
-    if (localStorage.getItem('feedos_auth') !== 'ok') {
-      window.location.href = '/login';
-    }
+    // Guard: require login
+    if (localStorage.getItem('feedos_auth') !== 'ok') { window.location.href = '/login'; }
 
     const $ = s => document.querySelector(s);
     const qs = new URLSearchParams(location.search);
 
-    let charts = {};
-    const newChart = (ctx,label,color) => new Chart(ctx,{
-      type:'line',
-      data:{labels:[1,2,3,4,5,6,7,8],datasets:[{label,data:[],borderColor:color,pointRadius:3,tension:.35}]},
-      options:{
-        responsive:true,maintainAspectRatio:false,
-        scales:{
-          y:{beginAtZero:false,grid:{color:'rgba(0,0,0,.07)'}},
-          x:{grid:{display:false}}
+    // Chart factory with safe autoscale
+    function makeChart(canvas, stroke) {
+      return new Chart(canvas, {
+        type: 'line',
+        data: {
+          labels: [1,2,3,4,5,6,7,8],
+          datasets: [{
+            label: '',
+            data: [],
+            borderColor: stroke,
+            backgroundColor: 'rgba(0,0,0,0)',
+            borderWidth: 2,
+            pointRadius: 3,
+            tension: .35
+          }]
         },
-        plugins:{legend:{display:false}}
-      }
-    });
-
-    charts.temp=newChart($('#chartTemp'),'Temp','#4b7a4a');
-    charts.hum=newChart($('#chartHum'),'Hum','#45886e');
-    charts.nh3=newChart($('#chartNH3'),'NH3','#527c6b');
-    charts.co2=newChart($('#chartCO2'),'CO2','#446f56');
-
-    let batches=[],current=null,timer=null;
-
-    async function loadBatches(){
-      const r=await fetch('/data/batches.json');
-      const j=await r.json();
-      batches=j.batches||[];
-      const sel=$('#batchSelect');
-      sel.innerHTML=batches.map(b=>`<option value="${b.token}">${b.batch_id}</option>`).join('');
-      const token=qs.get('token')||localStorage.getItem('feedos_selected_token')||batches[0].token;
-      sel.value=token; setCurrent(token);
-      sel.onchange=e=>setCurrent(e.target.value);
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              suggestedMin: undefined,
+              suggestedMax: undefined,
+              grid: { color: 'rgba(0,0,0,.07)' }
+            },
+            x: { grid: { display:false } }
+          },
+          plugins: { legend: { display:false } }
+        }
+      });
     }
 
-    function setCurrent(token){
-      current=batches.find(b=>b.token===token);
-      if(!current) return alert('Batch not found');
-      localStorage.setItem('feedos_selected_token',token);
-      $('#kpiBatch').textContent=current.batch_id;
-      ['chipTemp','chipHum','chipNH3','chipCO2'].forEach(id=>$('#'+id).textContent=`Sensor: ${current.sensor_id}`);
-      $('#viewQR').onclick=()=>window.location.href=`/panel/claim.html?token=${encodeURIComponent(token)}`;
-      $('#viewJSON').onclick=()=>window.open(`/${current.dossier_json}`,'_blank');
-      if(timer) clearInterval(timer);
-      loadTelemetry(); timer=setInterval(loadTelemetry,7000);
+    const charts = {
+      temp: makeChart($('#chartTemp'), '#2d6a4f'),
+      hum:  makeChart($('#chartHum'),  '#2a7f66'),
+      nh3:  makeChart($('#chartNH3'),  '#2b7a6b'),
+      co2:  makeChart($('#chartCO2'),  '#245f49'),
+    };
+
+    let batches = [], current = null, timer = null;
+
+    async function loadBatches() {
+      const r = await fetch('/data/batches.json');
+      const j = await r.json();
+      batches = j.batches || [];
+      const sel = $('#batchSelect');
+      sel.innerHTML = batches.map(b => `<option value="${b.token}">${b.batch_id}</option>`).join('');
+      const token = qs.get('token') || localStorage.getItem('feedos_selected_token') || (batches[0] && batches[0].token);
+      if (!token) return;
+      sel.value = token;
+      sel.onchange = e => setCurrent(e.target.value);
+      setCurrent(token);
     }
 
-    async function loadTelemetry(){
-      try{
-        const r=await fetch(`/${current.telemetry_json}?_t=${Date.now()}`);
-        const j=await r.json(); const s=j.series;
-        const avg=a=>a.reduce((x,y)=>x+y,0)/a.length; const max=a=>Math.max(...a);
-        $('#kpiCO2').textContent=Math.round(avg(s.co2));
-        $('#kpiNH3').textContent=max(s.nh3).toFixed(1);
-        charts.temp.data.datasets[0].data=s.temperature;
-        charts.hum.data.datasets[0].data=s.humidity;
-        charts.nh3.data.datasets[0].data=s.nh3;
-        charts.co2.data.datasets[0].data=s.co2;
-        Object.values(charts).forEach(c=>{
-          const all=c.data.datasets[0].data;
-          c.options.scales.y.min=Math.min(...all)-1;
-          c.options.scales.y.max=Math.max(...all)+1;
-          c.update();
+    function setCurrent(token) {
+      current = batches.find(b => b.token === token);
+      if (!current) return alert('Batch not found');
+      localStorage.setItem('feedos_selected_token', token);
+
+      $('#kpiBatch').textContent = current.batch_id;
+      ['chipTemp','chipHum','chipNH3','chipCO2'].forEach(id => $('#'+id).textContent = `Sensor: ${current.sensor_id}`);
+      $('#viewQR').onclick   = () => window.location.href = `/panel/claim.html?token=${encodeURIComponent(token)}`;
+      $('#viewJSON').onclick = () => window.open(`/${current.dossier_json}`,'_blank');
+
+      if (timer) clearInterval(timer);
+      loadTelemetry();               // first load
+      timer = setInterval(loadTelemetry, 7000); // refresh
+    }
+
+    function toNums(arr) { return (arr || []).map(v => Number(v)); }
+
+    async function loadTelemetry() {
+      try {
+        const r = await fetch(`/${current.telemetry_json}?_t=${Date.now()}`);
+        const j = await r.json();
+        const s = j.series || {};
+        const temp = toNums(s.temperature);
+        const hum  = toNums(s.humidity);
+        const nh3  = toNums(s.nh3);
+        const co2  = toNums(s.co2);
+
+        // KPIs
+        const avg = a => a.length ? a.reduce((x,y)=>x+y,0)/a.length : 0;
+        const max = a => a.length ? Math.max(...a) : 0;
+        $('#kpiCO2').textContent = Math.round(avg(co2));
+        $('#kpiNH3').textContent = max(nh3).toFixed(1);
+
+        // Update charts
+        const packs = [
+          {ch: charts.temp, data: temp},
+          {ch: charts.hum,  data: hum},
+          {ch: charts.nh3,  data: nh3},
+          {ch: charts.co2,  data: co2},
+        ];
+
+        packs.forEach(({ch, data}) => {
+          ch.data.datasets[0].data = data;
+
+          if (data.length) {
+            const mn = Math.min(...data);
+            const mx = Math.max(...data);
+            // فاصلهٔ امن برای دیده شدن خط
+            const pad = (mx - mn) < 1 ? 0.5 : (mx - mn) * 0.1;
+            ch.options.scales.y.suggestedMin = mn - pad;
+            ch.options.scales.y.suggestedMax = mx + pad;
+          } else {
+            ch.options.scales.y.suggestedMin = undefined;
+            ch.options.scales.y.suggestedMax = undefined;
+          }
+
+          ch.update();
+          // تضمین رندر در دستگاه‌های موبایل
+          ch.resize();
         });
-      }catch(e){console.error(e);}
+
+      } catch (e) {
+        console.error(e);
+      }
     }
 
-    $('#logout').onclick=()=>{localStorage.removeItem('feedos_auth');location.href='/login';};
+    $('#logout').onclick = () => { localStorage.removeItem('feedos_auth'); location.href = '/login'; };
     loadBatches();
   </script>
 </body>
