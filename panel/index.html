@@ -10,7 +10,7 @@
   <style>
     :root { --green:#204F32; --bg:#F4F7F4; --text:#1b3529; --muted:#607165; }
     body { margin:0; font-family:'Inter',sans-serif; background:var(--bg); }
-    header { background:#f0f5f1; padding:12px 20px; display:flex; align-items:center; border-bottom:1px solid #dce5de; }
+    header { background:#f0f5f1; padding:12px 20px; display:flex; align-items:center; border-bottom:1px solid #dce5de; gap:12px; }
     .brand {font-weight:700; color:var(--green); font-size:20px; display:flex; align-items:center; gap:8px;}
     .brand img {width:28px; height:28px;}
     .spacer {flex:1;}
@@ -21,10 +21,11 @@
     .card {background:#fff; border-radius:16px; box-shadow:0 3px 8px rgba(0,0,0,.05); padding:14px; min-height:260px;}
     h3 {margin:0 0 10px 0; color:var(--text);}
     .badge {background:#edf3ee; color:var(--green); border-radius:999px; padding:2px 8px; font-size:12px;}
-    .topbar button { background:#204F32; color:#fff; border:0; border-radius:8px; padding:8px 12px; margin-left:8px; cursor:pointer; font-weight:600; }
+    .topbar button { background:#204F32; color:#fff; border:0; border-radius:8px; padding:8px 12px; cursor:pointer; font-weight:600; }
     .topbar select { padding:8px; border-radius:8px; border:1px solid #ccc; font-weight:600; color:#204F32; }
     footer {text-align:center; margin:20px; color:#607165;}
     canvas {width:100% !important; height:200px !important;}
+    .btn {margin-left:8px}
   </style>
 </head>
 <body>
@@ -35,9 +36,9 @@
       <label>Batch:
         <select id="batchSelect"></select>
       </label>
-      <button id="viewQR">View QR Outcome</button>
-      <button id="viewJSON">View JSON API</button>
-      <button id="logout">Logout</button>
+      <button class="btn" id="viewQR">View QR Outcome</button>
+      <button class="btn" id="viewJSON">View JSON API</button>
+      <button class="btn" id="logout">Logout</button>
     </div>
   </header>
 
@@ -72,40 +73,33 @@
   <footer>Demo for Business Finland — data are simulated.</footer>
 
   <script>
-    // Guard: require login
+    // --- Auth guard ---
     if (localStorage.getItem('feedos_auth') !== 'ok') { window.location.href = '/login'; }
 
     const $ = s => document.querySelector(s);
     const qs = new URLSearchParams(location.search);
 
-    // Chart factory with safe autoscale
+    // --- Demo auto-update (بدون ادیت فایل) ---
+    const SIMULATE = true; // اگر خواستی خاموشش کن
+    let tick = 0;
+    function withDrift(arr, noise=0.2) {
+      if (!SIMULATE) return arr;
+      tick++;
+      return (arr||[]).map((v,i)=> Number(v) + Math.sin((tick+i)/3)*noise);
+    }
+
+    // --- Chart factory ---
     function makeChart(canvas, stroke) {
       return new Chart(canvas, {
         type: 'line',
-        data: {
-          labels: [1,2,3,4,5,6,7,8],
-          datasets: [{
-            label: '',
-            data: [],
-            borderColor: stroke,
-            backgroundColor: 'rgba(0,0,0,0)',
-            borderWidth: 2,
-            pointRadius: 3,
-            tension: .35
-          }]
-        },
+        data: { labels: [1,2,3,4,5,6,7,8], datasets: [{ data: [], borderColor: stroke, backgroundColor:'rgba(0,0,0,0)', borderWidth:2, pointRadius:3, tension:.35 }]},
         options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: {
-              suggestedMin: undefined,
-              suggestedMax: undefined,
-              grid: { color: 'rgba(0,0,0,.07)' }
-            },
-            x: { grid: { display:false } }
+          responsive:true, maintainAspectRatio:false,
+          scales:{
+            y:{ suggestedMin:undefined, suggestedMax:undefined, grid:{color:'rgba(0,0,0,.07)'} },
+            x:{ grid:{display:false} }
           },
-          plugins: { legend: { display:false } }
+          plugins:{ legend:{display:false} }
         }
       });
     }
@@ -134,7 +128,7 @@
 
     function setCurrent(token) {
       current = batches.find(b => b.token === token);
-      if (!current) return alert('Batch not found');
+      if (!current) { alert('Batch not found'); return; }
       localStorage.setItem('feedos_selected_token', token);
 
       $('#kpiBatch').textContent = current.batch_id;
@@ -147,17 +141,24 @@
       timer = setInterval(loadTelemetry, 7000); // refresh
     }
 
-    function toNums(arr) { return (arr || []).map(v => Number(v)); }
+    function toNums(arr){ return (arr||[]).map(Number); }
 
     async function loadTelemetry() {
       try {
         const r = await fetch(`/${current.telemetry_json}?_t=${Date.now()}`);
         const j = await r.json();
         const s = j.series || {};
-        const temp = toNums(s.temperature);
-        const hum  = toNums(s.humidity);
-        const nh3  = toNums(s.nh3);
-        const co2  = toNums(s.co2);
+        // base arrays as numbers
+        const baseTemp = toNums(s.temperature);
+        const baseHum  = toNums(s.humidity);
+        const baseNh3  = toNums(s.nh3);
+        const baseCo2  = toNums(s.co2);
+
+        // apply small drift to look live
+        const temp = withDrift(baseTemp, 0.15);
+        const hum  = withDrift(baseHum,  0.25);
+        const nh3  = withDrift(baseNh3,  0.12);
+        const co2  = withDrift(baseCo2,  4.0);
 
         // KPIs
         const avg = a => a.length ? a.reduce((x,y)=>x+y,0)/a.length : 0;
@@ -172,25 +173,18 @@
           {ch: charts.nh3,  data: nh3},
           {ch: charts.co2,  data: co2},
         ];
-
-        packs.forEach(({ch, data}) => {
+        packs.forEach(({ch, data})=>{
           ch.data.datasets[0].data = data;
-
-          if (data.length) {
-            const mn = Math.min(...data);
-            const mx = Math.max(...data);
-            // فاصلهٔ امن برای دیده شدن خط
-            const pad = (mx - mn) < 1 ? 0.5 : (mx - mn) * 0.1;
+          if (data.length){
+            const mn = Math.min(...data), mx = Math.max(...data);
+            const pad = (mx - mn) < 1 ? 0.5 : (mx - mn) * 0.12;
             ch.options.scales.y.suggestedMin = mn - pad;
             ch.options.scales.y.suggestedMax = mx + pad;
           } else {
             ch.options.scales.y.suggestedMin = undefined;
             ch.options.scales.y.suggestedMax = undefined;
           }
-
-          ch.update();
-          // تضمین رندر در دستگاه‌های موبایل
-          ch.resize();
+          ch.update(); ch.resize();
         });
 
       } catch (e) {
