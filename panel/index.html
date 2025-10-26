@@ -75,13 +75,34 @@ canvas{width:100%;height:280px}
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-const mock=[21.4,21.1,20.9,21.0,21.6,22.0,21.7,20.9,21.3,21.5,21.0];
-const hum=[57.0,56.0,54.8,56.9,55.2,54.9,56.6,55.0,56.6,55.4];
-const nh3=[7.8,8.2,9.0,7.2,8.6,9.1,7.8,8.3,7.9,8.8,7.4];
-const co2=[910,980,860,1020,980,900,960,920,990,900,880];
-const labels=['08:00','08:10','08:20','08:30','08:40','09:00','09:10','09:20','09:30','09:40','09:50'];
-function line(id,data){new Chart(document.getElementById(id).getContext('2d'),{type:'line',data:{labels,datasets:[{data,fill:false}]},options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:false}}}});}
-line('tChart',mock);line('hChart',hum);line('nChart',nh3);line('cChart',co2);
+// ---------- charts (ثابت)
+const tempSeries=[21.4,21.1,20.9,21.0,21.6,22.0,21.7,20.9,21.3,21.5,21.0];
+const humSeries =[57.0,56.0,54.8,56.9,55.2,54.9,56.6,55.0,56.6,55.4];
+const nh3Series =[7.8,8.2,9.0,7.2,8.6,9.1,7.8,8.3,7.9,8.8,7.4];
+const co2Series =[910,980,860,1020,980,900,960,920,990,900,880];
+const labels     =['08:00','08:10','08:20','08:30','08:40','09:00','09:10','09:20','09:30','09:40','09:50'];
+
+function line(id,data){
+  new Chart(document.getElementById(id).getContext('2d'),{
+    type:'line',
+    data:{labels,datasets:[{data,fill:false}]},
+    options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:false}}}
+  });
+}
+line('tChart',tempSeries); line('hChart',humSeries); line('nChart',nh3Series); line('cChart',co2Series);
+
+// ---------- KPI rotation (پویا)
+const co2KpiSeq  = [953, 960, 945, 972, 990, 966, 953];
+const nh3KpiSeq  = [9.1, 8.9, 9.3, 9.0, 9.2, 8.8, 9.1];
+let kpiIdx = 0;
+
+function tickKpis(){
+  kpiIdx = (kpiIdx + 1) % co2KpiSeq.length;
+  document.getElementById('co2').textContent  = co2KpiSeq[kpiIdx];
+  document.getElementById('nh3p').textContent = nh3KpiSeq[kpiIdx].toFixed(1);
+}
+setInterval(tickKpis, 5000); // هر ۵ ثانیه
+
 </script>
 </body>
 </html>
