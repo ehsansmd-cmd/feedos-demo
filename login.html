@@ -1,1 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FeedOS™ Login</title>
+<link rel="icon" type="image/png" href="./assets/feedos-logo.png">
+<style>
+  body{font-family:Inter,system-ui;background:#f4f7f5;color:#204F32;margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh}
+  .box{background:#fff;padding:30px;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.08);width:90%;max-width:360px;text-align:center}
+  input{width:100%;padding:10px;margin:8px 0;border:1px solid #ccc;border-radius:8px;font-size:15px}
+  button{width:100%;padding:10px;background:#204F32;color:#fff;border:none;border-radius:8px;font-size:15px;cursor:pointer;margin-top:10px}
+  h2{font-family:'EB Garamond',serif;font-weight:700}
+  small{color:#777;font-size:12px}
+</style>
+</head>
+<body>
+  <div class="box">
+    <h2>FeedOS™ Login</h2>
+    <input id="user" placeholder="Username" value="demo">
+    <input id="pass" placeholder="Password" type="password" value="feedos2025">
+    <button onclick="login()">Login</button>
+    <small>Demo access for Business Finland review</small>
+  </div>
 
+<script>
+function login(){
+  const u=document.getElementById('user').value.trim();
+  const p=document.getElementById('pass').value.trim();
+  if(u==='demo' && p==='feedos2025'){
+    localStorage.setItem('feedos_auth','ok');
+    const next=new URLSearchParams(location.search).get('next')||'/panel/index.html';
+    location.href=next;
+  }else{
+    alert('Invalid credentials. Use demo / feedos2025');
+  }
+}
+</script>
+</body>
+</html>
