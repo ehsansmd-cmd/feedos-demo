@@ -3,33 +3,25 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>FeedOS™ — The AI Platform for Sustainable Protein Farming</title>
+  <title>FeedOS™ — Panel Dashboard</title>
 
   <!-- Brand fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <!-- Favicon (put assets/favicon.png in repo) -->
-  <link rel="icon" type="image/png" href="./assets/favicon.png"/>
+  <!-- Favicon / Logo -->
+  <link rel="icon" type="image/png" href="../assets/feedos-logo.png"/>
 
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
   <style>
     :root{
-      --primary:#204F32;          /* Primary Green */
-      --accent:#8BF35A;           /* Accent Lime */
-      --secondary:#2E7D50;        /* Secondary Deep Green */
-      --text:#22302A;             /* Core Text */
-      --muted:#5A6B62;            /* Grey-Green */
-      --bg:#F4F7F5;               /* Background */
-      --card:#fff;
-      --shadow:0 8px 30px rgba(0,0,0,.06);
-      --border:#e5eee9;
+      --primary:#204F32; --accent:#8BF35A; --secondary:#2E7D50;
+      --text:#22302A; --muted:#5A6B62; --bg:#F4F7F5; --card:#fff;
+      --shadow:0 8px 30px rgba(0,0,0,.06); --border:#e5eee9;
     }
     *{box-sizing:border-box}
     body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto;background:var(--bg);color:var(--text)}
-    /* Header */
     header{padding:18px 0;border-bottom:1px solid var(--border);background:#fff;position:sticky;top:0;z-index:10}
     .container{max-width:1100px;margin:0 auto;padding:0 20px}
     .brandwrap{display:flex;gap:12px;align-items:center}
@@ -41,7 +33,6 @@
     a.cta{appearance:none;text-decoration:none;background:var(--secondary);color:#fff;padding:10px 14px;border-radius:10px;font-weight:600;border:1px solid #1e5c3b}
     a.cta.alt{background:var(--primary);border-color:#153823}
 
-    /* Main */
     main.container{padding:22px 20px}
     .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
     .kpi{background:#fff;border-radius:14px;padding:14px 16px;border:1px solid var(--border);box-shadow:var(--shadow)}
@@ -53,7 +44,6 @@
     .row{display:flex;align-items:center;justify-content:space-between;gap:12px}
     .pill{display:inline-block;padding:4px 10px;border-radius:999px;background:#e6f7ea;color:var(--primary);font-weight:600;font-size:12px;border:1px solid #cdebd7}
     h3.title{margin:0;color:var(--primary);font-family:'EB Garamond',serif}
-
     footer{margin:26px 0 10px;color:var(--muted);font-size:12px;text-align:center}
 
     @media (max-width:860px){
@@ -63,11 +53,22 @@
   </style>
 </head>
 <body>
+  <!-- Login gate: redirect to /login.html if not authed -->
+  <script>
+    (function(){
+      const authed = localStorage.getItem('feedos_auth') === 'ok';
+      if(!authed){
+        const next = encodeURIComponent(location.pathname + location.search);
+        location.replace('/login.html?next=' + next);
+      }
+    })();
+  </script>
+
   <!-- Header -->
   <header>
     <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
       <div class="brandwrap">
-        <img src="./assets/logo.png" alt="FeedOS logo" />
+        <img src="../assets/feedos-logo.png" alt="FeedOS logo" />
         <div class="brandtitle">
           <div class="name">FeedOS™</div>
           <div class="tag">The AI Platform for Sustainable Protein Farming</div>
@@ -75,7 +76,7 @@
       </div>
       <div class="actions">
         <a class="cta" href="./claim.html?token=clm_demo_001">View QR Outcome</a>
-        <a class="cta alt" href="./dossier/claim_clm_demo_001.json" target="_blank">View JSON API</a>
+        <a class="cta alt" href="../dossier/claim_clm_demo_001.json" target="_blank">View JSON API</a>
       </div>
     </div>
   </header>
@@ -113,30 +114,27 @@
     <!-- About -->
     <div class="card" style="margin-top:20px;">
       <div class="row">
-        <h3 class="title">About this Demo</h3>
+        <h3 class="title">About this Panel</h3>
         <span class="pill">Telemetry → FCS™ → Verification</span>
       </div>
       <ol style="margin-top:8px;color:var(--muted)">
-        <li><strong style="color:var(--text)">Edge/Cloud Telemetry (mock)</strong>: data stream in <code>data/mock_telemetry.json</code>.</li>
-        <li><strong style="color:var(--text)">Outcome Dossier (FCS™)</strong>: <code>dossier/claim_clm_demo_001.json</code> with demo signature.</li>
+        <li><strong style="color:var(--text)">Edge/Cloud Telemetry (mock)</strong>: data stream in <code>../data/mock_telemetry.json</code>.</li>
+        <li><strong style="color:var(--text)">Outcome Dossier (FCS™)</strong>: <code>../dossier/claim_clm_demo_001.json</code> with demo signature.</li>
         <li><strong style="color:var(--text)">Verification UI</strong>: <a href="./claim.html?token=clm_demo_001">QR page</a> renders batch details & validity.</li>
       </ol>
     </div>
 
-    <footer>
-      Demo for Business Finland Evaluation (2025).
-    </footer>
+    <footer>Demo for Business Finland — data are simulated.</footer>
   </main>
 
   <!-- Scripts -->
   <script>
     async function main(){
       try{
-        const res = await fetch('./data/mock_telemetry.json');
+        const res = await fetch('../data/mock_telemetry.json');
         const data = await res.json();
         const pts = data.points || [];
 
-        // 1) Labels as strings (no time adapter needed)
         const labels = pts.map(p => {
           const d = new Date(p.ts_utc);
           const hh = String(d.getUTCHours()).padStart(2,'0');
@@ -144,13 +142,11 @@
           return `${hh}:${mm} UTC`;
         });
 
-        // 2) Series
         const temp = pts.map(p => p.metrics.temp_c);
         const rh   = pts.map(p => p.metrics.rh_pct);
         const nh3  = pts.map(p => p.metrics.nh3_ppm);
         const co2  = pts.map(p => p.metrics.co2_ppm);
 
-        // 3) KPIs
         document.getElementById('batchId').textContent = pts[0]?.batch_id ?? 'FEG-2026-001';
         document.getElementById('uptime').textContent  = '99.8%';
         const avgCo2 = Math.round(co2.reduce((a,b)=>a+b,0)/Math.max(co2.length,1));
@@ -158,7 +154,6 @@
         document.getElementById('avgCo2').textContent  = isFinite(avgCo2)? avgCo2 : '—';
         document.getElementById('peakNh3').textContent = isFinite(peakNh3)? peakNh3.toFixed(1) : '—';
 
-        // 4) Charts (category x-axis)
         const baseOpts = {
           type:'line',
           options:{
@@ -173,7 +168,7 @@
         new Chart(document.getElementById('nh3Chart'),  { ...baseOpts, data:{ labels, datasets:[{ data: nh3 }] }});
         new Chart(document.getElementById('co2Chart'),  { ...baseOpts, data:{ labels, datasets:[{ data: co2 }] }});
 
-        // 5) Simple live simulation for two KPIs (visual heartbeat)
+        // heartbeat for two KPIs
         const mockStream = [
           { co2: avgCo2 + 12, nh3: (peakNh3 + 0.3) },
           { co2: avgCo2 - 8,  nh3: (peakNh3 - 0.4) },
@@ -190,7 +185,6 @@
 
       }catch(e){
         console.error('Telemetry load error:', e);
-        // Fail-safe UI
         document.getElementById('uptime').textContent = '—';
         document.getElementById('avgCo2').textContent = '—';
         document.getElementById('peakNh3').textContent = '—';
