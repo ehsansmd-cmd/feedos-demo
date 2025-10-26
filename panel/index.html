@@ -1,112 +1,193 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>FeedOS™ — Panel Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-<link rel="icon" type="image/png" href="/assets/logo.png"/>
-<style>
-:root{--primary:#204F32;--secondary:#2E7D50;--text:#22302A;--muted:#5A6B62;--bg:#F4F7F5;--border:#e5eee9;--shadow:0 8px 30px rgba(0,0,0,.06)}
-body{margin:0;font-family:Inter,system-ui;background:var(--bg);color:var(--text)}
-.container{max-width:1100px;margin:0 auto;padding:0 20px}
-header{background:#fff;border-bottom:1px solid var(--border)}
-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
-.brand{display:flex;align-items:center;gap:10px}
-.brand img{width:36px;height:36px;border-radius:10px}
-.brand .name{font-family:'EB Garamond',serif;font-weight:700;font-size:22px;color:var(--primary)}
-.action a,.action button{margin-left:12px;background:var(--secondary);color:#fff;padding:8px 12px;border-radius:10px;text-decoration:none;font-weight:700;border:0;cursor:pointer}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:20px 0}
-.card{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);padding:16px}
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:10px}
-.kpi{background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;font-weight:700}
-footer{margin:18px 0 14px;text-align:center;color:var(--muted);font-size:12px}
-canvas{width:100%;height:280px}
-@media (max-width:900px){.grid{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}}
-</style>
-<script>
-// --- guard: require demo login
-(function(){
-  if (sessionStorage.getItem('feedos_auth') !== '1') {
-    location.replace('/login.html?next=' + encodeURIComponent(location.pathname));
-  }
-})();
-</script>
+  <meta charset="utf-8" />
+  <title>FeedOS™ — Panel Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --green:#204F32; --green-2:#2E7D50; --accent:#8BF35A;
+      --text:#22302A; --muted:#5A6B62; --bg:#F4F7F5; --card:#ffffff;
+      --line:#2E7D50;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:#eef3ef;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--text)}
+    .wrap{max-width:1120px;margin:0 auto;padding:16px}
+    header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#fff;border-radius:14px;margin-bottom:16px;box-shadow:0 1px 0 rgba(0,0,0,.04)}
+    .brand{display:flex;gap:12px;align-items:center}
+    .brand img{width:32px;height:32px;border-radius:8px}
+    .brand h1{font-size:20px;margin:0;color:var(--green)}
+    .navbtns{display:flex;gap:10px;align-items:center}
+    .btn{padding:10px 14px;border-radius:10px;border:1px solid rgba(0,0,0,.08);background:#e8f1eb;color:#0f3; color:var(--green);font-weight:600;text-decoration:none}
+    .btn.primary{background:var(--green);color:#fff;border-color:var(--green)}
+    .btn.ghost{background:#fff}
+    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    .kpi{background:#fff;border-radius:16px;padding:18px 16px;text-align:center;font-weight:700;box-shadow:0 2px 0 rgba(0,0,0,.04)}
+    .kpi small{display:block;font-weight:600;color:var(--muted);margin-bottom:6px}
+    .cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+    .card{background:#fff;border-radius:16px;padding:16px;box-shadow:0 2px 0 rgba(0,0,0,.04)}
+    .card h3{margin:0 0 10px 0;color:var(--green);font-size:18px}
+    canvas{width:100%;height:260px;display:block}
+    footer{margin:22px auto 40px;max-width:1120px;color:var(--muted);font-size:14px;text-align:center}
+    @media (max-width:900px){
+      .grid{grid-template-columns:1fr 1fr}
+      .cards{grid-template-columns:1fr}
+    }
+  </style>
 </head>
 <body>
-<header>
-  <div class="container">
-    <nav>
-      <div class="brand"><img src="/assets/logo.png" alt="logo"><div class="name">FeedOS™</div></div>
-      <div class="action">
-        <a href="/panel/claim.html?token=clm_demo_001">View QR Outcome</a>
-        <a href="/dossier/claim_clm_demo_001.json">View JSON API</a>
-        <button onclick="sessionStorage.removeItem('feedos_auth');location.href='/'">Logout</button>
+  <script>
+    // Gate: اگر لاگین نکرده بود، بفرست به /login
+    (function(){
+      try{
+        if(localStorage.getItem('feedos_auth')!=='ok'){
+          location.replace('/login');
+        }
+      }catch(e){}
+    })();
+  </script>
+
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <img src="/assets/logo.png" alt="FeedOS logo">
+        <div>
+          <h1>FeedOS™</h1>
+          <div style="color:var(--muted);font-size:13px">The AI Platform for Sustainable Protein Farming</div>
+        </div>
       </div>
-    </nav>
+      <div class="navbtns">
+        <a class="btn" href="/panel/claim.html?token=clm_demo_001">View QR Outcome</a>
+        <a class="btn ghost" href="/dossier/claim_clm_demo_001.json" target="_blank" rel="noopener">View JSON API</a>
+        <button id="logoutBtn" class="btn primary" type="button">Logout</button>
+      </div>
+    </header>
+
+    <section class="grid" id="kpis">
+      <div class="kpi"><small>Current Batch</small><div id="batch">FEG-2026-001</div></div>
+      <div class="kpi"><small>Uptime (24h)</small><div id="uptime">99.8%</div></div>
+      <div class="kpi"><small>Avg CO₂ (ppm)</small><div id="co2Avg">–</div></div>
+      <div class="kpi"><small>NH₃ Peak (ppm)</small><div id="nh3Peak">–</div></div>
+    </section>
+
+    <section class="cards">
+      <div class="card">
+        <h3>Temperature (°C)</h3>
+        <canvas id="tempChart" width="800" height="260"></canvas>
+      </div>
+      <div class="card">
+        <h3>Relative Humidity (%)</h3>
+        <canvas id="rhChart" width="800" height="260"></canvas>
+      </div>
+      <div class="card">
+        <h3>Ammonia NH₃ (ppm)</h3>
+        <canvas id="nh3Chart" width="800" height="260"></canvas>
+      </div>
+      <div class="card">
+        <h3>CO₂ (ppm)</h3>
+        <canvas id="co2Chart" width="800" height="260"></canvas>
+      </div>
+    </section>
   </div>
-</header>
 
-<main class="container">
-  <div class="kpis">
-    <div class="kpi">Current Batch<br><span id="batch">FEG-2026-001</span></div>
-    <div class="kpi">Uptime (24h)<br><span id="uptime">99.8%</span></div>
-    <div class="kpi">Avg CO₂ (ppm)<br><span id="co2">953</span></div>
-    <div class="kpi">NH₃ Peak (ppm)<br><span id="nh3p">9.1</span></div>
-  </div>
+  <footer>Demo for Business Finland — data are simulated.</footer>
 
-  <div class="grid">
-    <div class="card"><h3>Temperature (°C)</h3><canvas id="tChart"></canvas></div>
-    <div class="card"><h3>Relative Humidity (%)</h3><canvas id="hChart"></canvas></div>
-    <div class="card"><h3>Ammonia NH₃ (ppm)</h3><canvas id="nChart"></canvas></div>
-    <div class="card"><h3>CO₂ (ppm)</h3><canvas id="cChart"></canvas></div>
-  </div>
+  <script>
+    // ساده‌ترین رسم خطی روی canvas
+    function drawLine(canvas, series){
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width, h = canvas.height;
+      ctx.clearRect(0,0,w,h);
+      const pad = 28;
+      const xs = series.map((_,i)=>i);
+      const min = Math.min(...series), max = Math.max(...series);
+      const ax = (x)=> pad + (x/(series.length-1))*(w-2*pad);
+      const ay = (y)=> h-pad - ((y-min)/(max-min||1))*(h-2*pad);
 
-  <div class="card">
-    <h3>About this Panel</h3>
-    <ol>
-      <li><b>Edge/Cloud Telemetry (mock)</b>: reads from <code>/data/mock_telemetry.json</code></li>
-      <li><b>Outcome Dossier (FCS™)</b>: <code>/dossier/claim_clm_demo_001.json</code></li>
-      <li><b>Verification UI</b>: QR page renders batch details & validity.</li>
-    </ol>
-  </div>
-</main>
+      // axes
+      ctx.strokeStyle = 'rgba(0,0,0,.08)';
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(pad, pad); ctx.lineTo(pad, h-pad); ctx.lineTo(w-pad, h-pad); ctx.stroke();
 
-<footer>Demo for Business Finland — data simulated from mock telemetry.</footer>
+      // line
+      ctx.strokeStyle = '#2E7D50';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      xs.forEach((x,i)=>{
+        const X=ax(x), Y=ay(series[i]);
+        if(i===0) ctx.moveTo(X,Y); else ctx.lineTo(X,Y);
+      });
+      ctx.stroke();
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-// fetch mock data every few seconds
-async function fetchTelemetry(){
-  try {
-    const res = await fetch('/mock_telemetry.json?_=' + Date.now());
-    const js = await res.json();
-    updateTelemetry(js);
-  } catch(err){ console.error('Fetch failed',err); }
-}
+      // dots
+      ctx.fillStyle = '#2E7D50';
+      xs.forEach((x,i)=>{
+        const X=ax(x), Y=ay(series[i]);
+        ctx.beginPath(); ctx.arc(X,Y,3,0,Math.PI*2); ctx.fill();
+      });
+    }
 
-function updateTelemetry(js){
-  document.getElementById('batch').textContent = js.batch_id;
-  const c = avg(js.sensors.co2);
-  const n = Math.max(...js.sensors.nh3);
-  document.getElementById('co2').textContent  = c.toFixed(0);
-  document.getElementById('nh3p').textContent = n.toFixed(1);
-  drawChart('tChart',js.sensors.temperature);
-  drawChart('hChart',js.sensors.humidity);
-  drawChart('nChart',js.sensors.nh3);
-  drawChart('cChart',js.sensors.co2);
-}
+    // داده نمونه fallback
+    const FALLBACK = {
+      temperature: [21.1,21.3,20.9,20.8,21.7,21.9,21.5,20.8],
+      humidity:    [56.8,57.1,55.9,56.2,55.7,57.3,56.5,55.0],
+      nh3:         [7.6,8.9,7.2,8.6,7.9,8.4,8.0,7.3],
+      co2:         [910,1008,860,1035,985,940,990,905]
+    };
 
-function avg(a){return a.reduce((x,y)=>x+y)/a.length}
-function drawChart(id,data){
-  new Chart(document.getElementById(id).getContext('2d'),{
-    type:'line',data:{labels:data.map((_,i)=>i+1),datasets:[{data,fill:false,borderColor:'#204F32'}]},
-    options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:false}}}
-  });
-}
+    const els = {
+      co2Avg: document.getElementById('co2Avg'),
+      nh3Peak: document.getElementById('nh3Peak'),
+      t: document.getElementById('tempChart'),
+      rh: document.getElementById('rhChart'),
+      nh3: document.getElementById('nh3Chart'),
+      co2: document.getElementById('co2Chart'),
+    };
 
-fetchTelemetry();
-setInterval(fetchTelemetry, 7000); // هر ۷ ثانیه داده جدید
+    async function loadData(){
+      try{
+        const res = await fetch('/data/mock_telemetry.json?t=' + Date.now(), {cache:'no-store'});
+        if(!res.ok) throw new Error('fetch failed');
+        const json = await res.json();
+        return {
+          temperature: json.temperature ?? FALLBACK.temperature,
+          humidity:    json.humidity ?? FALLBACK.humidity,
+          nh3:         json.nh3 ?? FALLBACK.nh3,
+          co2:         json.co2 ?? FALLBACK.co2,
+        };
+      }catch(e){
+        // اگر خطا، از داده‌ی نمونه استفاده کن
+        return {...FALLBACK};
+      }
+    }
 
-</script>
+    function setKPIs(data){
+      const avg = (arr)=> Math.round(arr.reduce((a,b)=>a+b,0)/arr.length);
+      const peak = (arr)=> Math.max(...arr).toFixed(1);
+      els.co2Avg.textContent = String(avg(data.co2));
+      els.nh3Peak.textContent = String(peak(data.nh3));
+    }
+
+    async function render(){
+      const d = await loadData();
+      setKPIs(d);
+      drawLine(els.t,  d.temperature);
+      drawLine(els.rh, d.humidity);
+      drawLine(els.nh3,d.nh3);
+      drawLine(els.co2,d.co2);
+    }
+
+    // اولین رندر و آپدیت‌های دوره‌ای
+    render();
+    setInterval(async ()=>{
+      await render();
+    }, 7000);
+
+    // logout
+    document.getElementById('logoutBtn').addEventListener('click', ()=>{
+      try{ localStorage.removeItem('feedos_auth'); }catch(e){}
+      location.href = '/login';
+    });
+  </script>
 </body>
 </html>
