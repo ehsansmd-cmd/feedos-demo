@@ -1,28 +1,110 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>About — FeedOS™</title>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-<link rel="icon" type="image/png" href="./assets/feedos-logo.png"/>
-<style>
-:root{--primary:#204F32;--text:#22302A;--muted:#5A6B62;--bg:#F4F7F5;--border:#e5eee9;--shadow:0 8px 30px rgba(0,0,0,.06)}
-*{box-sizing:border-box} body{margin:0;font-family:Inter;background:var(--bg);color:var(--text)}
-.container{max-width:900px;margin:0 auto;padding:24px}
-.header{display:flex;align-items:center;gap:10px;margin:6px 0 16px}
-.header img{width:40px;height:40px;border-radius:10px;object-fit:contain}
-h1{font-family:'EB Garamond',serif;color:var(--primary);margin:0}
-.card{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);padding:18px}
-a{color:#2E7D50;text-decoration:none}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>About — FeedOS™</title>
+  <link rel="icon" href="assets/logo.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green: #204F32;
+      --bg: #F4F7F4;
+      --text: #1b3529;
+      --muted: #607165;
+    }
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    main {
+      max-width: 780px;
+      margin: 60px auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, .06);
+      padding: 40px 50px;
+      text-align: left;
+    }
+    h1 {
+      font-size: 26px;
+      color: var(--green);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 0;
+    }
+    h1 img {
+      width: 30px;
+      height: 30px;
+    }
+    p {
+      line-height: 1.7;
+      font-size: 16px;
+      color: var(--text);
+    }
+    a {
+      color: var(--green);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .nav {
+      margin-top: 25px;
+      font-size: 15px;
+      color: var(--muted);
+    }
+    .email {
+      margin-top: 15px;
+      font-size: 15px;
+      color: var(--green);
+      font-weight: 600;
+    }
+  </style>
 </head>
 <body>
-<div class="container">
-  <div class="header"><img src="./assets/feedos-logo.png" alt="logo"><h1>About FeedOS™</h1></div>
-  <div class="card">
-    <p>FeedOS™ is a certification intelligence platform for sustainable protein farming. We compile telemetry into digitally-signed outcome dossiers (FCS™), enabling instant, machine-verifiable proof for retailers and regulators.</p>
-    <p><a href="./index.html">Home</a> · <a href="./products.html">Products</a> · <a href="./contact.html">Contact</a> · <a href="./login.html">Login</a></p>
-  </div>
-</div>
+  <main>
+    <h1>
+      <img src="assets/logo.png" alt="FeedOS logo">
+      About FeedOS™
+    </h1>
+
+    <p>
+      <strong>FeedOS™</strong> is a certification intelligence platform for sustainable protein farming. 
+      We compile verified telemetry from poultry production systems into digitally-signed 
+      <strong>FeedOS Claim Standards (FCS™)</strong>, enabling instant, machine-verifiable proof 
+      of nutritional and environmental outcomes for retailers and regulators.
+    </p>
+
+    <p>
+      FeedOS helps poultry producers transform data from their farms into trusted certification dossiers — 
+      bridging on-farm telemetry with <em>EU Green Deal</em> traceability requirements.
+    </p>
+
+    <div class="email">
+      📧 Contact: <a href="mailto:Ehsan.smd@gmail.com">Ehsan.smd@gmail.com</a>
+    </div>
+
+    <div class="nav">
+      <a href="index.html">Home</a> · 
+      <a href="products.html">Products</a> · 
+      <a href="contact.html">Contact</a> · 
+      <a href="login.html">Login</a>
+    </div>
+
+    <footer>
+      © 2025 FeedOS™ — Demo for Business Finland. All rights reserved.
+    </footer>
+  </main>
 </body>
 </html>
