@@ -1,219 +1,276 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <title>FeedOS™ — Panel Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="icon" href="../assets/logo.png" />
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
   <style>
     :root{
-      --brand:#204F32; --accent:#8BF35A; --ink:#22302A; --muted:#5A6B62; --bg:#F4F7F5; --card:#ffffff;
+      --green:#204F32;      /* primary */
+      --mint:#E9F3EC;       /* soft bg */
+      --chip:#E3F1E5;       /* chip bg */
+      --ink:#1f2b21;        /* text */
+      --card:#ffffff;       /* card */
+      --shadow: 0 10px 24px rgba(0,0,0,.05);
+      --radius:16px;
     }
-    *{box-sizing:border-box} body{margin:0;background:#eef3ef;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
-    .wrap{max-width:1100px;margin:0 auto;padding:20px}
-    .nav{display:flex;align-items:center;gap:12px}
-    .logo{display:flex;align-items:center;gap:10px}
-    .logo img{width:34px;height:34px;border-radius:7px}
-    .brand{font-weight:700;font-size:24px;color:var(--brand)}
-    .sub{color:#6b7a71;font-size:13px;margin-top:-6px}
-    .right{margin-left:auto;display:flex;gap:10px}
-    .btn{background:var(--brand);color:#fff;border:0;border-radius:10px;padding:10px 14px;font-weight:600;cursor:pointer}
-    .btn.ghost{background:#e6eee9;color:var(--brand)}
-    .btn.red{background:#385243}
-    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:18px}
-    .kpi{background:#fff;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.06);padding:18px;text-align:center}
-    .kpi h4{margin:0 0 6px 0;font-size:16px;color:#375244}
-    .kpi .val{font-size:26px;font-weight:800;color:#1e342a}
-    .cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
-    .card{background:#fff;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.06);padding:16px;min-height:260px}
-    .card h3{margin:6px 0 8px 0;color:#1f3a2e}
-    .badge{background:#eaf2ed;color:#355c46;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:600;float:right}
-    footer{margin:24px 0 10px 0;color:#6a7a71;font-size:12px;text-align:center}
+    *{box-sizing:border-box}
+    body{
+      margin:0;background:#F3F6F4;color:var(--ink);
+      font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+      line-height:1.45;
+    }
+    .wrap{max-width:1152px;margin:0 auto;padding:20px}
+    header{
+      background:linear-gradient(180deg,var(--mint),#f4f7f5);
+      border-bottom:1px solid #e6eee9;
+    }
+    .bar{display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .brand{display:flex;align-items:center;gap:10px}
+    .brand img{width:36px;height:36px;border-radius:10px;object-fit:cover}
+    .brand h1{font-size:22px;margin:0;color:var(--green);font-weight:800;letter-spacing:.3px}
+    .brand small{display:block;font-weight:500;color:#5f6f64}
+
+    .actions{display:flex;gap:10px}
+    .btn{
+      appearance:none;border:0;border-radius:10px;padding:10px 14px;
+      background:var(--green);color:#fff;font-weight:700;cursor:pointer;box-shadow:var(--shadow)
+    }
+    .btn.ghost{background:#e8efe9;color:var(--green);font-weight:700}
+    .btn.small{padding:8px 12px;border-radius:8px}
+
+    /* KPI cards */
+    .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin:18px 0 6px}
+    .kpi{
+      background:var(--card);border-radius:18px;box-shadow:var(--shadow);
+      padding:18px 20px;text-align:center
+    }
+    .kpi b{display:block;font-size:28px;margin-top:6px}
+
+    /* Chart cards */
+    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:18px}
+    .card{
+      background:var(--card);border-radius:18px;box-shadow:var(--shadow);padding:16px 16px 12px
+    }
+    h3{margin:0 0 10px 0;font-size:18px}
+    .chip{
+      background:var(--chip);color:var(--green);border-radius:999px;
+      padding:4px 10px;margin-left:8px;font-size:12px;font-weight:700
+    }
+
+    /* ثابت کردن قد نمودارها */
+    .chart-box{position:relative;height:260px}
+    .chart-box canvas{height:100% !important}
+
+    footer{
+      text-align:center;color:#6b7a70;font-size:14px;margin:22px 0 28px
+    }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
 <body>
-  <div class="wrap">
-    <!-- Top bar -->
-    <div class="nav">
-      <div class="logo">
-        <img src="../assets/logo.png" alt="FeedOS logo" />
+  <!-- auth gate -->
+  <script>
+    // اگر توکن وجود نداشت، به صفحه‌ی ورود برگرد
+    (function(){
+      try{
+        if(localStorage.getItem('feedos_auth')!=='ok'){
+          window.location.href = '/login';
+        }
+      }catch(e){}
+    })();
+  </script>
+
+  <header>
+    <div class="wrap bar" style="padding:14px 20px">
+      <div class="brand">
+        <img src="/assets/logo.png" alt="FeedOS logo" />
         <div>
-          <div class="brand">FeedOS™</div>
-          <div class="sub">The AI Platform for Sustainable Protein Farming</div>
+          <h1>FeedOS™</h1>
+          <small>The AI Platform for Sustainable Protein Farming</small>
         </div>
       </div>
-      <div class="right">
-        <button class="btn ghost" id="qrBtn">View QR Outcome</button>
-        <button class="btn ghost" id="apiBtn">View JSON API</button>
-        <button class="btn" id="logoutBtn">Logout</button>
+      <div class="actions">
+        <a class="btn ghost" href="/panel/claim.html?token=clm_demo_001">View QR Outcome</a>
+        <a class="btn ghost" href="/dossier/claim_clm_demo_001.json" target="_blank">View JSON API</a>
+        <button class="btn small" id="logoutBtn">Logout</button>
       </div>
     </div>
+  </header>
 
-    <!-- KPIs -->
-    <div class="grid">
+  <main class="wrap">
+    <section class="kpis">
       <div class="kpi">
-        <h4>Current Batch</h4>
-        <div class="val" id="batchVal">FEG-2026-001</div>
+        Current Batch
+        <b id="kpi-batch">FEG-2026-001</b>
       </div>
       <div class="kpi">
-        <h4>Uptime (24h)</h4>
-        <div class="val" id="uptimeVal">99.8%</div>
+        Uptime (24h)
+        <b id="kpi-uptime">99.8%</b>
       </div>
       <div class="kpi">
-        <h4>Avg CO₂ (ppm)</h4>
-        <div class="val" id="co2AvgVal">953</div>
+        Avg CO₂ (ppm)
+        <b id="kpi-co2">953</b>
       </div>
       <div class="kpi">
-        <h4>NH₃ Peak (ppm)</h4>
-        <div class="val" id="nh3PeakVal">9.1</div>
+        NH₃ Peak (ppm)
+        <b id="kpi-nh3">9.1</b>
       </div>
-    </div>
+    </section>
 
-    <!-- Charts -->
-    <div class="cards">
+    <section class="grid">
       <div class="card">
-        <h3>Temperature (°C) <span class="badge">Sensor: dev-001</span></h3>
-        <canvas id="tempChart" height="120"></canvas>
+        <h3>Temperature (°C) <span class="chip">Sensor: dev-001</span></h3>
+        <div class="chart-box"><canvas id="tempChart"></canvas></div>
       </div>
       <div class="card">
-        <h3>Relative Humidity (%) <span class="badge">Sensor: dev-001</span></h3>
-        <canvas id="rhChart" height="120"></canvas>
+        <h3>Relative Humidity (%) <span class="chip">Sensor: dev-001</span></h3>
+        <div class="chart-box"><canvas id="humidChart"></canvas></div>
+      </div>
+
+      <div class="card">
+        <h3>Ammonia NH₃ (ppm) <span class="chip">Sensor: dev-001</span></h3>
+        <div class="chart-box"><canvas id="nh3Chart"></canvas></div>
       </div>
       <div class="card">
-        <h3>Ammonia NH₃ (ppm) <span class="badge">Sensor: dev-001</span></h3>
-        <canvas id="nh3Chart" height="120"></canvas>
+        <h3>CO₂ (ppm) <span class="chip">Sensor: dev-001</span></h3>
+        <div class="chart-box"><canvas id="co2Chart"></canvas></div>
       </div>
-      <div class="card">
-        <h3>CO₂ (ppm) <span class="badge">Sensor: dev-001</span></h3>
-        <canvas id="co2Chart" height="120"></canvas>
-      </div>
-    </div>
+    </section>
 
     <footer>Demo for Business Finland — data are simulated.</footer>
-  </div>
+  </main>
 
-<script>
-/* -------------------- auth gate -------------------- */
-(function authGate(){
-  try{
-    const ok = localStorage.getItem('feedos_auth');
-    if(ok !== 'ok'){ window.location.href = '/login'; }
-  }catch(e){ window.location.href = '/login'; }
-})();
-
-/* -------------------- helpers -------------------- */
-const $ = (id)=>document.getElementById(id);
-const JSON_URL = '../data/mock_telemetry.json'; // از روت می‌خونه
-
-// جلوگیری از کش شدن JSON
-async function loadJSON() {
-  const url = JSON_URL + '?t=' + Date.now();
-  const res = await fetch(url, { cache: 'no-store' });
-  if(!res.ok) throw new Error('Failed to load telemetry');
-  return res.json();
-}
-
-function jitter(val, pct=0.01){ // ±1%
-  const delta = val * pct;
-  const rnd = (Math.random()*2 - 1) * delta;
-  return Math.max(0, Math.round((val + rnd)*10)/10);
-}
-
-/* -------------------- charts -------------------- */
-let tempChart, rhChart, nh3Chart, co2Chart;
-
-function buildLine(ctx, label, data){
-  return new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: data.map((_,i)=>String(i+1)),
-      datasets: [{
-        label,
-        data,
-        borderWidth: 2,
-        tension: 0.3,
-        pointRadius: 3,
-        borderColor: '#2E7D50',
-        backgroundColor: 'rgba(46,125,80,0.15)'
-      }]
-    },
-    options:{
-      responsive:true,
-      maintainAspectRatio:false,
-      plugins:{ legend:{ display:false } },
-      scales:{ y:{ beginAtZero:false } }
+  <script>
+    // ---------- helpers ----------
+    function yBounds(values){
+      const arr = values.map(Number).filter(Number.isFinite);
+      const min = Math.min(...arr);
+      const max = Math.max(...arr);
+      const pad = Math.max((max-min)*0.15, 0.5);
+      return {min: min - pad, max: max + pad};
     }
-  });
-}
+    function makeLineChart(canvasId, labels, series, unitLabel){
+      const ctx = document.getElementById(canvasId).getContext('2d');
+      const {min,max} = yBounds(series);
+      return new Chart(ctx,{
+        type:'line',
+        data:{ labels,
+          datasets:[{
+            label:unitLabel, data:series,
+            fill:false, tension:0.3, pointRadius:3, borderWidth:2
+          }]
+        },
+        options:{
+          responsive:true, maintainAspectRatio:false,
+          animation:{duration:250},
+          plugins:{legend:{display:false}},
+          scales:{
+            x:{ticks:{autoSkip:true,maxTicksLimit:8}},
+            y:{beginAtZero:false,suggestedMin:min,suggestedMax:max,ticks:{precision:1}}
+          }
+        }
+      });
+    }
+    function updateChart(chart, labels, series){
+      const clean = series.map(Number).filter(Number.isFinite);
+      const {min,max} = yBounds(clean);
+      chart.data.labels = labels;
+      chart.data.datasets[0].data = clean;
+      chart.options.scales.y.suggestedMin = min;
+      chart.options.scales.y.suggestedMax = max;
+      chart.update('none');
+    }
+    function average(arr){
+      const a = arr.map(Number).filter(Number.isFinite);
+      return a.reduce((s,v)=>s+v,0)/a.length;
+    }
+    function peak(arr){
+      return Math.max(...arr.map(Number).filter(Number.isFinite));
+    }
+    function jitter(series, delta){
+      // کمی نویز ملایم برای شبیه‌سازیِ جریان زنده
+      return series.map(v=>{
+        const d = (Math.random()*2-1)*delta;
+        return +(v+d).toFixed(1);
+      });
+    }
 
-function updateChart(chart, data){
-  chart.data.labels = data.map((_,i)=>String(i+1));
-  chart.data.datasets[0].data = data;
-  chart.update();
-}
+    // ---------- logout ----------
+    document.getElementById('logoutBtn').addEventListener('click', ()=>{
+      try{ localStorage.removeItem('feedos_auth'); }catch(e){}
+      window.location.href = '/login';
+    });
 
-/* -------------------- UI actions -------------------- */
-$('logoutBtn').onclick = ()=>{ localStorage.removeItem('feedos_auth'); window.location.href = '/login'; };
-$('qrBtn').onclick = ()=>{ window.location.href = '/panel/claim.html?token=clm_demo_001'; };
-$('apiBtn').onclick = ()=>{ window.location.href = '/dossier/claim_clm_demo_001.json'; };
+    // ---------- load telemetry & start ----------
+    const DATA_URL = '/data/mock_telemetry.json';  // از ریشه‌ی دامنه
+    let labels = [];  // 1..N
+    let series = { temperature:[], humidity:[], nh3:[], co2:[] };
+    let tempChart, humidChart, nh3Chart, co2Chart;
 
-/* -------------------- initial load -------------------- */
-let state = null;
+    async function loadTelemetry(){
+      const res = await fetch(DATA_URL, {cache:'no-store'});
+      if(!res.ok) throw new Error('Could not load telemetry. Check data/mock_telemetry.json');
+      const json = await res.json();
+      const s = json.series || json; // انعطاف اگر ساختار فقط آرایه‌ها باشد
+      series = {
+        temperature: (s.temperature||[]).slice(0,8),
+        humidity:    (s.humidity||[]).slice(0,8),
+        nh3:         (s.nh3||[]).slice(0,8),
+        co2:         (s.co2||[]).slice(0,8)
+      };
+      const n = Math.max(series.temperature.length, series.humidity.length, series.nh3.length, series.co2.length);
+      labels = Array.from({length:n}, (_,i)=> (i+1).toString());
+    }
 
-async function init(){
-  try{
-    state = await loadJSON();
+    function paintKPIs(){
+      // Batch ثابت نمایشی
+      document.getElementById('kpi-batch').textContent = 'FEG-2026-001';
+      // Uptime ثابت نمایشی
+      document.getElementById('kpi-uptime').textContent = '99.8%';
+      // از سری فعلی، KPI بگیر
+      document.getElementById('kpi-co2').textContent = Math.round(average(series.co2)).toString();
+      document.getElementById('kpi-nh3').textContent = peak(series.nh3).toFixed(1);
+    }
 
-    // KPIs
-    $('batchVal').textContent = 'FEG-2026-001';
-    $('uptimeVal').textContent = '99.8%';
+    function buildCharts(){
+      tempChart  = makeLineChart('tempChart',  labels, series.temperature, '°C');
+      humidChart = makeLineChart('humidChart', labels, series.humidity,    '%');
+      nh3Chart   = makeLineChart('nh3Chart',   labels, series.nh3,         'ppm');
+      co2Chart   = makeLineChart('co2Chart',   labels, series.co2,         'ppm');
+    }
 
-    // average CO2 از داده‌ها محاسبه می‌شود
-    const co2 = state.series.co2;
-    const nh3 = state.series.nh3;
+    function startLive(){
+      setInterval(()=>{
+        // کمی نویز ملایم بده تا زنده به‌نظر بیاد
+        series.temperature = jitter(series.temperature, 0.15);
+        series.humidity    = jitter(series.humidity,    0.4);
+        series.nh3         = jitter(series.nh3,         0.15);
+        series.co2         = jitter(series.co2,         6);
 
-    const avgCO2 = Math.round(co2.reduce((a,b)=>a+b,0)/co2.length);
-    const peakNH3 = Math.max(...nh3);
+        // KPI
+        paintKPIs();
 
-    $('co2AvgVal').textContent = String(avgCO2);
-    $('nh3PeakVal').textContent = String(peakNH3);
+        // update charts
+        updateChart(tempChart,  labels, series.temperature);
+        updateChart(humidChart, labels, series.humidity);
+        updateChart(nh3Chart,   labels, series.nh3);
+        updateChart(co2Chart,   labels, series.co2);
+      }, 7000);
+    }
 
-    // Charts
-    tempChart = buildLine($('tempChart'), 'Temp', state.series.temperature);
-    rhChart   = buildLine($('rhChart'),   'RH',   state.series.humidity);
-    nh3Chart  = buildLine($('nh3Chart'),  'NH3',  nh3);
-    co2Chart  = buildLine($('co2Chart'),  'CO2',  co2);
-
-  }catch(err){
-    console.error(err);
-    alert('Could not load telemetry. Check data/mock_telemetry.json');
-  }
-}
-
-/* -------------------- periodic refresh -------------------- */
-async function refreshLoop(){
-  try{
-    const data = await loadJSON();   // no-store + cache-bust => همیشه تازه
-    // کمی نوسان برای حس زنده بودن
-    const co2Avg = Math.round(data.series.co2.reduce((a,b)=>a+b,0)/data.series.co2.length);
-    const nh3Pk  = Math.max(...data.series.nh3);
-
-    $('co2AvgVal').textContent = String(jitter(co2Avg, 0.02));
-    $('nh3PeakVal').textContent = String(jitter(nh3Pk, 0.02));
-
-    updateChart(tempChart, data.series.temperature.map(v=>jitter(v,0.01)));
-    updateChart(rhChart,   data.series.humidity.map(v=>jitter(v,0.01)));
-    updateChart(nh3Chart,  data.series.nh3.map(v=>jitter(v,0.02)));
-    updateChart(co2Chart,  data.series.co2.map(v=>jitter(v,0.02)));
-  }catch(e){
-    console.warn('refresh failed', e);
-  }finally{
-    setTimeout(refreshLoop, 7000); // هر ۷ ثانیه
-  }
-}
-
-init().then(refreshLoop);
-</script>
+    (async function init(){
+      try{
+        await loadTelemetry();
+        paintKPIs();
+        buildCharts();
+        startLive();
+      }catch(err){
+        alert(err.message || err);
+      }
+    })();
+  </script>
 </body>
 </html>
