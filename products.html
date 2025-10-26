@@ -1,36 +1,258 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Products — FeedOS™</title>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-<link rel="icon" type="image/png" href="./assets/feedos-logo.png"/>
-<style>
-:root{--primary:#204F32;--text:#22302A;--muted:#5A6B62;--bg:#F4F7F5;--border:#e5eee9;--shadow:0 8px 30px rgba(0,0,0,.06)}
-*{box-sizing:border-box} body{margin:0;font-family:Inter;background:var(--bg);color:var(--text)}
-.container{max-width:1000px;margin:0 auto;padding:24px}
-h1{font-family:'EB Garamond',serif;color:var(--primary);margin:6px 0 16px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.card{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);padding:18px}
-h3{font-family:'EB Garamond',serif;color:var(--primary);margin:8px 0}
-a{color:#2E7D50;text-decoration:none}
-@media (max-width:860px){.grid{grid-template-columns:1fr}}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Products — FeedOS™</title>
+  <link rel="icon" href="/assets/logo.png" />
+  <style>
+    :root{
+      --bg:#f3f7f3;
+      --panel:#ffffff;
+      --ink:#1f3a2e;
+      --ink-soft:#2e5a46;
+      --muted:#6b8c7d;
+      --brand:#2f6b4f;
+      --brand-2:#e7f1ea;
+      --ring:rgba(47,107,79,.35);
+      --shadow:0 10px 24px rgba(0,0,0,.06);
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font:16px/1.6 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--ink); background:var(--bg);
+    }
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 20px 60px}
+    /* header */
+    .nav{
+      position:sticky; top:0; z-index:10;
+      background:rgba(243,247,243,.85); backdrop-filter:saturate(140%) blur(8px);
+      border-bottom:1px solid #e5efe8;
+    }
+    .nav-inner{max-width:1100px; margin:0 auto; padding:14px 20px; display:flex; align-items:center; gap:14px}
+    .brand{display:flex; align-items:center; gap:10px; font-weight:700; color:var(--ink); text-decoration:none}
+    .brand img{width:26px; height:26px; border-radius:6px}
+    .spacer{flex:1}
+    .menu a{
+      color:var(--ink); text-decoration:none; margin:0 10px; font-weight:600;
+      padding:8px 10px; border-radius:10px
+    }
+    .menu a:hover{background:#eaf3ee}
+    .cta{
+      background:var(--brand); color:#fff; text-decoration:none; font-weight:700;
+      padding:10px 16px; border-radius:12px; box-shadow:var(--shadow)
+    }
+    .cta:hover{filter:brightness(.98)}
+    /* hero */
+    .hero{
+      display:grid; gap:16px; grid-template-columns:1.1fr .9fr; align-items:center;
+      margin-top:22px;
+    }
+    .hero-card{
+      background:var(--panel); border-radius:var(--radius); padding:26px; box-shadow:var(--shadow);
+      border:1px solid #e7efe9;
+    }
+    h1{font-size:36px; line-height:1.15; margin:0 0 10px}
+    .lead{color:var(--muted); font-size:18px}
+    .badge{display:inline-block; font-size:12px; padding:6px 10px; border-radius:999px; background:var(--brand-2); color:var(--ink-soft); font-weight:700}
+    /* grid */
+    .grid{display:grid; gap:18px; grid-template-columns:repeat(2,1fr); margin-top:22px}
+    .card{
+      background:var(--panel); border-radius:var(--radius); padding:22px; box-shadow:var(--shadow);
+      border:1px solid #e7efe9; display:flex; flex-direction:column; gap:14px;
+    }
+    .card h3{margin:0; font-size:20px}
+    .card p{margin:0; color:var(--muted)}
+    .meta{display:flex; gap:8px; flex-wrap:wrap}
+    .chip{background:#eef6f0; color:var(--ink-soft); border:1px solid #d9e8df; padding:4px 10px; border-radius:999px; font-size:12px; font-weight:700}
+    .actions{display:flex; gap:10px; margin-top:auto}
+    .btn{display:inline-block; text-decoration:none; padding:10px 12px; border-radius:10px; font-weight:700; border:1px solid #dfeae3; color:var(--ink)}
+    .btn:hover{background:#f0f6f3}
+    .btn-primary{background:var(--brand); color:#fff; border-color:transparent}
+    .btn-primary:hover{filter:brightness(.98)}
+    .note{
+      margin-top:26px; color:var(--muted); text-align:center; font-size:14px
+    }
+    /* sections */
+    .section-title{margin:34px 0 12px; font-size:24px}
+    .road{background:var(--panel); border-radius:var(--radius); padding:18px; border:1px solid #e7efe9; box-shadow:var(--shadow)}
+    .road li{margin:.4rem 0}
+    /* footer mini */
+    .foot{margin-top:36px; color:var(--muted); font-size:14px}
+    .foot a{color:var(--ink-soft); text-decoration:none}
+    @media (max-width:900px){
+      .hero{grid-template-columns:1fr}
+      .grid{grid-template-columns:1fr}
+    }
+    /* tiny icon blocks */
+    .icon{
+      width:38px; height:38px; border-radius:10px; display:inline-grid; place-items:center; 
+      background:var(--brand-2); color:var(--brand); font-weight:900; border:1px solid #d9e8df;
+      box-shadow:0 6px 18px rgba(47,107,79,.12);
+    }
+  </style>
 </head>
 <body>
-<div class="container">
-  <h1>Products</h1>
-  <div class="grid">
-    <div class="card">
-      <h3>FeedOS Evidence Node</h3>
-      <p>Edge/cloud telemetry acquisition, pre-audit KPIs, and dossier compilation.</p>
-    </div>
-    <div class="card">
-      <h3>FCS™ Verification API</h3>
-      <p>QR/API verification for retailers to instantly validate outcome claims.</p>
+  <!-- nav -->
+  <div class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="/">
+        <img src="/assets/logo.png" alt="FeedOS logo" />
+        <span>FeedOS™</span>
+      </a>
+      <div class="spacer"></div>
+      <nav class="menu">
+        <a href="/">Home</a>
+        <a href="/products">Products</a>
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+      </nav>
+      <a class="cta" href="/login">Login to Panel</a>
     </div>
   </div>
-  <p style="margin-top:14px"><a href="./index.html">Home</a> · <a href="./about.html">About</a> · <a href="./contact.html">Contact</a> · <a href="./login.html">Login</a></p>
-</div>
+
+  <div class="wrap">
+    <!-- hero -->
+    <div class="hero">
+      <div class="hero-card">
+        <div class="badge">Verification-first platform for sustainable protein farming</div>
+        <h1>Products</h1>
+        <p class="lead">
+          FeedOS™ داده‌های مزرعه را به «مدرک قابل‌ممیزی» تبدیل می‌کند.  
+          از ایج‌ران‌تایم امن در مزرعه تا <b>Digital Twin & Evidence Compiler</b> در کلاود،
+          و در نهایت <b>Outcome Dossier</b> و <b>Verification API</b> برای خرده‌فروش و رگولاتور — همه‌چیز برای صدور سریع ادعای تغذیه‌ای/پایداری مطابق EFSA.
+        </p>
+      </div>
+      <div class="hero-card">
+        <div class="meta">
+          <span class="chip">EFSA-aligned</span>
+          <span class="chip">Machine-verifiable claims</span>
+          <span class="chip">Telemetry → Evidence</span>
+          <span class="chip">Retail & Export</span>
+        </div>
+        <p style="margin-top:8px;color:var(--muted)">
+          هر محصول یک بخش از «Certification Intelligence Layer» است:  
+          سیگنال‌ها جمع‌آوری می‌شوند، مدل می‌شوند، به پکیج شواهد دیجیتال تبدیل می‌شوند،  
+          و در نهایت به صورت QR/API قابل‌اعتبارسنجی در اختیار ذی‌نفعان قرار می‌گیرد.
+        </p>
+      </div>
+    </div>
+
+    <!-- product cards -->
+    <h2 class="section-title">Platform Suite</h2>
+    <div class="grid">
+
+      <!-- Evidence Node -->
+      <article class="card">
+        <div class="meta">
+          <span class="icon">EN</span>
+          <span class="chip">Edge Runtime</span>
+          <span class="chip">Secure Gateway</span>
+        </div>
+        <h3>FeedOS Evidence Node</h3>
+        <p>
+          ایج‌ران‌تایم امن برای جمع‌آوری تله‌متری از سنسورها/PLC/SCADA و بافر compliant.
+          داده‌ها پیش‌اعتبارسنجی می‌شوند (timestamps، تمامیت، محدوده‌ها) و سپس به صورت امن به کلاود ارسال می‌گردند تا زنجیرهٔ شواهد گسسته نشود.
+        </p>
+        <ul class="note" style="text-align:left">
+          <li>پروتکل‌های صنعتی و IoT (Modbus, MQTT, REST)</li>
+          <li>Health checks + local buffering برای قطعی شبکه</li>
+          <li>امضای دیجیتال بسته‌های داده در مبدأ</li>
+        </ul>
+        <div class="actions">
+          <a class="btn-primary btn" href="/login">See live panel</a>
+          <a class="btn" href="/contact">Talk to us</a>
+        </div>
+      </article>
+
+      <!-- Cloud AI Layer -->
+      <article class="card">
+        <div class="meta">
+          <span class="icon">AI</span>
+          <span class="chip">Digital Twin</span>
+          <span class="chip">Optimization</span>
+        </div>
+        <h3>Digital Twin & Evidence Compiler</h3>
+        <p>
+          موتورهای <b>Outcome Prediction</b> و <b>Optimization</b> با استفاده از فرمولاسیون خوراک، تله‌متری محیطی و نتایج آزمایشگاهی،
+          عملکرد تغذیه‌ای (مثلاً امگا-۳) و اثرات پایداری (CO₂e) را مدل و پیش‌بینی می‌کنند.  
+          خروجی، «Pre-Dossier» استانداردشده برای صدور Claim است.
+        </p>
+        <ul class="note" style="text-align:left">
+          <li>Linear/Stochastic Optimization با قیود هزینه/سیرکولاریتی/رفاه</li>
+          <li>Closed-loop learning با فیدبک assays</li>
+          <li>Traceable feature lineage برای ممیزی</li>
+        </ul>
+        <div class="actions">
+          <a class="btn" href="/products">Technical brief</a>
+          <a class="btn" href="/contact">Request a demo</a>
+        </div>
+      </article>
+
+      <!-- Outcome Dossier / QR -->
+      <article class="card">
+        <div class="meta">
+          <span class="icon">QR</span>
+          <span class="chip">FCS™ Dossier</span>
+          <span class="chip">Signed Claims</span>
+        </div>
+        <h3>Outcome Dossier & QR</h3>
+        <p>
+          برای هر بچ، یک «Outcome Dossier» امضاشده (FCS™) تولید می‌شود که شامل payload ادعا، زنجیرهٔ تله‌متری و امضای دیجیتال است.  
+          خرده‌فروش یا ممیز با اسکن QR یا باز کردن JSON، اعتبار ادعا را فوری می‌سنجد.
+        </p>
+        <ul class="note" style="text-align:left">
+          <li>Machine-verifiable JSON + human-friendly view</li>
+          <li>Tamper simulation برای آموزش تیم‌ها</li>
+          <li>لینک مستقیم از پنل عملیات</li>
+        </ul>
+        <div class="actions">
+          <a class="btn-primary btn" href="/panel/claim.html?token=clm_demo_001">View sample claim</a>
+          <a class="btn" href="/dossier/claim_clm_demo_001.json">Open JSON</a>
+        </div>
+      </article>
+
+      <!-- Verification API -->
+      <article class="card">
+        <div class="meta">
+          <span class="icon">API</span>
+          <span class="chip">Retail/Reg</span>
+          <span class="chip">EFSA-aligned</span>
+        </div>
+        <h3>Verification API</h3>
+        <p>
+          API سبک برای اعتبارسنجی بلادرنگ ادعاها در سیستم‌های خرده‌فروشی، مارکت‌پلیس‌ها و گمرک/رگولاتوری.
+          با ارسال <code>claim_token</code> نتیجهٔ «valid / invalid / tampered» برمی‌گردد.
+        </p>
+        <ul class="note" style="text-align:left">
+          <li>Rate-limited & auditable</li>
+          <li>Webhook برای eventing (e.g., shelf label update)</li>
+          <li>SDKs سبک (JS / Python)</li>
+        </ul>
+        <div class="actions">
+          <a class="btn" href="/contact">Get API access</a>
+          <a class="btn" href="/">Read docs (soon)</a>
+        </div>
+      </article>
+
+    </div>
+
+    <!-- roadmap / differentiation -->
+    <h2 class="section-title">Why FeedOS™</h2>
+    <div class="road">
+      <ul>
+        <li><b>Certification Intelligence, نه یک داشبورد مانیتورینگ:</b> تمرکز روی تولید «مدرک» قابل‌اعتبارسنجی برای صادرات و خرده‌فروشی.</li>
+        <li><b>Telemetry → Evidence → Claim:</b> زنجیرهٔ انتهابه‌انتها با امضای دیجیتال و قابلیت ممیزی.</li>
+        <li><b>Ready for Circular Feed™:</b> هم‌سویی با EFSA و استانداردهای اتحادیه اروپا برای ادعاهای تغذیه‌ای و پایداری.</li>
+      </ul>
+    </div>
+
+    <p class="note">برای همکاری تجاری یا سؤالات فنی: <a href="mailto:Ehsan.smd@gmail.com">Ehsan.smd@gmail.com</a></p>
+
+    <div class="foot">
+      <a href="/">Home</a> · <a href="/about">About</a> · <a href="/contact">Contact</a> · <a href="/login">Login</a>
+    </div>
+  </div>
 </body>
 </html>
