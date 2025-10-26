@@ -1,212 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>FeedOS™ — Panel Dashboard</title>
-
-  <!-- Brand fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
-  <!-- Favicon / Logo -->
-  <link rel="icon" type="image/png" href="../assets/feedos-logo.png"/>
-
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-
-  <style>
-    :root{
-      --primary:#204F32; --accent:#8BF35A; --secondary:#2E7D50;
-      --text:#22302A; --muted:#5A6B62; --bg:#F4F7F5; --card:#fff;
-      --shadow:0 8px 30px rgba(0,0,0,.06); --border:#e5eee9;
-    }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto;background:var(--bg);color:var(--text)}
-    header{padding:18px 0;border-bottom:1px solid var(--border);background:#fff;position:sticky;top:0;z-index:10}
-    .container{max-width:1100px;margin:0 auto;padding:0 20px}
-    .brandwrap{display:flex;gap:12px;align-items:center}
-    .brandwrap img{width:44px;height:44px;border-radius:10px;object-fit:contain}
-    .brandtitle{display:flex;flex-direction:column}
-    .brandtitle .name{font-family:'EB Garamond',serif;font-weight:700;font-size:26px;color:var(--primary);letter-spacing:.2px;line-height:1.1}
-    .brandtitle .tag{color:var(--muted);font-size:12.5px}
-    .actions{display:flex;gap:10px;flex-wrap:wrap}
-    a.cta{appearance:none;text-decoration:none;background:var(--secondary);color:#fff;padding:10px 14px;border-radius:10px;font-weight:600;border:1px solid #1e5c3b}
-    a.cta.alt{background:var(--primary);border-color:#153823}
-
-    main.container{padding:22px 20px}
-    .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
-    .kpi{background:#fff;border-radius:14px;padding:14px 16px;border:1px solid var(--border);box-shadow:var(--shadow)}
-    .kpi .label{color:var(--muted);font-size:12px}
-    .kpi .value{font-weight:700;font-size:20px;margin-top:4px}
-
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-    .card{background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:18px;border:1px solid var(--border)}
-    .row{display:flex;align-items:center;justify-content:space-between;gap:12px}
-    .pill{display:inline-block;padding:4px 10px;border-radius:999px;background:#e6f7ea;color:var(--primary);font-weight:600;font-size:12px;border:1px solid #cdebd7}
-    h3.title{margin:0;color:var(--primary);font-family:'EB Garamond',serif}
-    footer{margin:26px 0 10px;color:var(--muted);font-size:12px;text-align:center}
-
-    @media (max-width:860px){
-      .kpis{grid-template-columns:1fr 1fr}
-      .grid{grid-template-columns:1fr}
-    }
-  </style>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>FeedOS™ — Panel Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="/assets/logo.png"/>
+<style>
+:root{--primary:#204F32;--secondary:#2E7D50;--text:#22302A;--muted:#5A6B62;--bg:#F4F7F5;--border:#e5eee9;--shadow:0 8px 30px rgba(0,0,0,.06)}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui;background:var(--bg);color:var(--text)}
+.container{max-width:1100px;margin:0 auto;padding:0 20px}
+header{background:#fff;border-bottom:1px solid var(--border)}
+nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+.brand{display:flex;align-items:center;gap:10px}
+.brand img{width:36px;height:36px;border-radius:10px}
+.brand .name{font-family:'EB Garamond',serif;font-weight:700;font-size:22px;color:var(--primary)}
+.action a{margin-left:12px;background:var(--secondary);color:#fff;padding:8px 12px;border-radius:10px;text-decoration:none;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:20px 0}
+.card{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);padding:16px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:10px}
+.kpi{background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;font-weight:700}
+footer{margin:18px 0 14px;text-align:center;color:var(--muted);font-size:12px}
+canvas{width:100%;height:280px}
+@media (max-width:900px){.grid{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}}
+</style>
 </head>
 <body>
-  <!-- Login gate: redirect to /login.html if not authed -->
-  <script>
-    (function(){
-      const authed = localStorage.getItem('feedos_auth') === 'ok';
-      if(!authed){
-        const next = encodeURIComponent(location.pathname + location.search);
-        location.replace('/login.html?next=' + next);
-      }
-    })();
-  </script>
-
-  <!-- Header -->
-  <header>
-    <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
-      <div class="brandwrap">
-        <img src="../assets/feedos-logo.png" alt="FeedOS logo" />
-        <div class="brandtitle">
-          <div class="name">FeedOS™</div>
-          <div class="tag">The AI Platform for Sustainable Protein Farming</div>
-        </div>
+<header>
+  <div class="container">
+    <nav>
+      <div class="brand"><img src="/assets/logo.png" alt="logo"><div class="name">FeedOS™</div></div>
+      <div class="action">
+        <a href="/panel/claim.html?token=clm_demo_001">View QR Outcome</a>
+        <a href="/dossier/claim_clm_demo_001.json">View JSON API</a>
+        <a href="/" style="background:#1f2937">Logout</a>
       </div>
-      <div class="actions">
-        <a class="cta" href="./claim.html?token=clm_demo_001">View QR Outcome</a>
-        <a class="cta alt" href="../dossier/claim_clm_demo_001.json" target="_blank">View JSON API</a>
-      </div>
-    </div>
-  </header>
+    </nav>
+  </div>
+</header>
 
-  <!-- Main -->
-  <main class="container">
-    <!-- KPI cards -->
-    <div class="kpis">
-      <div class="kpi"><div class="label">Current Batch</div><div class="value" id="batchId">—</div></div>
-      <div class="kpi"><div class="label">Uptime (24h)</div><div class="value" id="uptime">—</div></div>
-      <div class="kpi"><div class="label">Avg CO₂ (ppm)</div><div class="value" id="avgCo2">—</div></div>
-      <div class="kpi"><div class="label">NH₃ Peak (ppm)</div><div class="value" id="peakNh3">—</div></div>
-    </div>
+<main class="container">
+  <div class="kpis">
+    <div class="kpi">Current Batch<br><span id="batch">FEG-2026-001</span></div>
+    <div class="kpi">Uptime (24h)<br><span id="uptime">99.8%</span></div>
+    <div class="kpi">Avg CO₂ (ppm)<br><span id="co2">953</span></div>
+    <div class="kpi">NH₃ Peak (ppm)<br><span id="nh3p">9.1</span></div>
+  </div>
 
-    <!-- Charts -->
-    <div class="grid">
-      <div class="card">
-        <div class="row"><h3 class="title">Temperature (°C)</h3><span class="pill">Sensor: dev-001</span></div>
-        <canvas id="tempChart" height="180"></canvas>
-      </div>
-      <div class="card">
-        <div class="row"><h3 class="title">Relative Humidity (%)</h3><span class="pill">Sensor: dev-001</span></div>
-        <canvas id="rhChart" height="180"></canvas>
-      </div>
-      <div class="card">
-        <div class="row"><h3 class="title">Ammonia NH₃ (ppm)</h3><span class="pill">Sensor: dev-001</span></div>
-        <canvas id="nh3Chart" height="180"></canvas>
-      </div>
-      <div class="card">
-        <div class="row"><h3 class="title">CO₂ (ppm)</h3><span class="pill">Sensor: dev-001</span></div>
-        <canvas id="co2Chart" height="180"></canvas>
-      </div>
-    </div>
+  <div class="grid">
+    <div class="card"><h3>Temperature (°C)</h3><canvas id="tChart"></canvas></div>
+    <div class="card"><h3>Relative Humidity (%)</h3><canvas id="hChart"></canvas></div>
+    <div class="card"><h3>Ammonia NH₃ (ppm)</h3><canvas id="nChart"></canvas></div>
+    <div class="card"><h3>CO₂ (ppm)</h3><canvas id="cChart"></canvas></div>
+  </div>
 
-    <!-- About -->
-    <div class="card" style="margin-top:20px;">
-      <div class="row">
-        <h3 class="title">About this Panel</h3>
-        <span class="pill">Telemetry → FCS™ → Verification</span>
-      </div>
-      <ol style="margin-top:8px;color:var(--muted)">
-        <li><strong style="color:var(--text)">Edge/Cloud Telemetry (mock)</strong>: data stream in <code>../data/mock_telemetry.json</code>.</li>
-        <li><strong style="color:var(--text)">Outcome Dossier (FCS™)</strong>: <code>../dossier/claim_clm_demo_001.json</code> with demo signature.</li>
-        <li><strong style="color:var(--text)">Verification UI</strong>: <a href="./claim.html?token=clm_demo_001">QR page</a> renders batch details & validity.</li>
-      </ol>
-    </div>
+  <div class="card">
+    <h3>About this Panel</h3>
+    <ol>
+      <li><b>Edge/Cloud Telemetry (mock)</b>: <code>../data/mock_telemetry.json</code></li>
+      <li><b>Outcome Dossier (FCS™)</b>: <code>../dossier/claim_clm_demo_001.json</code></li>
+      <li><b>Verification UI</b>: QR page renders batch details & validity (see button above).</li>
+    </ol>
+  </div>
+</main>
 
-    <footer>Demo for Business Finland — data are simulated.</footer>
-  </main>
+<footer>Demo for Business Finland — data are simulated.</footer>
 
-  <!-- Scripts -->
-  <script>
-    async function main(){
-      try{
-        const res = await fetch('../data/mock_telemetry.json');
-        const data = await res.json();
-        const pts = data.points || [];
+<script>
+/* ساده: داده‌های موک برای دو چارت اول */
+const mock = [21.4,21.1,20.9,21.0,21.6,22.0,21.7,20.9,21.3,21.5,21.0];
+const hum  = [57.0,56.0,54.8,56.9,55.2,54.9,56.6,55.0,56.6,55.4];
+const nh3  = [7.8,8.2,9.0,7.2,8.6,9.1,7.8,8.3,7.9,8.8,7.4];
+const co2  = [910,980,860,1020,980,900,960,920,990,900,880];
+const labels = ['08:00','08:10','08:20','08:30','08:40','09:00','09:10','09:20','09:30','09:40','09:50'];
 
-        const labels = pts.map(p => {
-          const d = new Date(p.ts_utc);
-          const hh = String(d.getUTCHours()).padStart(2,'0');
-          const mm = String(d.getUTCMinutes()).padStart(2,'0');
-          return `${hh}:${mm} UTC`;
-        });
-
-        const temp = pts.map(p => p.metrics.temp_c);
-        const rh   = pts.map(p => p.metrics.rh_pct);
-        const nh3  = pts.map(p => p.metrics.nh3_ppm);
-        const co2  = pts.map(p => p.metrics.co2_ppm);
-
-        document.getElementById('batchId').textContent = pts[0]?.batch_id ?? 'FEG-2026-001';
-        document.getElementById('uptime').textContent  = '99.8%';
-        const avgCo2 = Math.round(co2.reduce((a,b)=>a+b,0)/Math.max(co2.length,1));
-        const peakNh3 = nh3.length ? Math.max(...nh3) : 0;
-        document.getElementById('avgCo2').textContent  = isFinite(avgCo2)? avgCo2 : '—';
-        document.getElementById('peakNh3').textContent = isFinite(peakNh3)? peakNh3.toFixed(1) : '—';
-
-        const baseOpts = {
-          type:'line',
-          options:{
-            responsive:true, animation:false,
-            scales:{ x:{ ticks:{ maxTicksLimit:6 } }, y:{ beginAtZero:false } },
-            plugins:{ legend:{ display:false } },
-            elements:{ point:{ radius:0 } }
-          }
-        };
-        new Chart(document.getElementById('tempChart'), { ...baseOpts, data:{ labels, datasets:[{ data: temp }] }});
-        new Chart(document.getElementById('rhChart'),   { ...baseOpts, data:{ labels, datasets:[{ data: rh }] }});
-        new Chart(document.getElementById('nh3Chart'),  { ...baseOpts, data:{ labels, datasets:[{ data: nh3 }] }});
-        new Chart(document.getElementById('co2Chart'),  { ...baseOpts, data:{ labels, datasets:[{ data: co2 }] }});
-
-        // heartbeat for two KPIs
-        const mockStream = [
-          { co2: avgCo2 + 12, nh3: (peakNh3 + 0.3) },
-          { co2: avgCo2 - 8,  nh3: (peakNh3 - 0.4) },
-          { co2: avgCo2 + 5,  nh3: (peakNh3 + 0.1) },
-          { co2: avgCo2 - 3,  nh3: (peakNh3 - 0.2) }
-        ];
-        let idx = 0;
-        setInterval(()=>{
-          const m = mockStream[idx];
-          document.getElementById('avgCo2').textContent  = Math.round(m.co2);
-          document.getElementById('peakNh3').textContent = m.nh3.toFixed(1);
-          idx = (idx + 1) % mockStream.length;
-        }, 5000);
-
-      }catch(e){
-        console.error('Telemetry load error:', e);
-        document.getElementById('uptime').textContent = '—';
-        document.getElementById('avgCo2').textContent = '—';
-        document.getElementById('peakNh3').textContent = '—';
-      }
-    }
-    main();
-  </script>
-<button id="logoutBtn" onclick="logout()" style="
-  position:fixed; top:14px; right:14px; z-index:9999;
-  background:#204F32; color:#fff; border:0; border-radius:10px;
-  padding:8px 12px; font-weight:700; box-shadow:0 6px 20px rgba(0,0,0,.1);
-">Logout</button>
-</body>
-  <script>
-  // اگر لاگین نیست، بفرست به صفحه لاگین و بعد از لاگین برگرد همین صفحه
-  if (localStorage.getItem('feedos_auth') !== 'ok') {
-    location.href = '/login.html?next=' + encodeURIComponent(location.pathname + location.search);
-  }
-  // خروج
-  function logout(){
-    localStorage.removeItem('feedos_auth');
-    location.href = '/login.html';
-  }
+function line(canvasId, data){
+  const c = document.getElementById(canvasId).getContext('2d');
+  new Chart(c,{type:'line',data:{labels,datasets:[{data,fill:false}]} ,options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:false}}}});
+}
 </script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+line('tChart', mock);
+line('hChart', hum);
+line('nChart', nh3);
+line('cChart', co2);
+</script>
+</body>
 </html>
