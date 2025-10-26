@@ -2,12 +2,14 @@
   "batch_id": "FEG-2026-001",
   "nutrient_target": "Omega-3 ≥ 250 mg/egg",
   "verified_result": "261 mg/egg",
-  "co2e_summary": "0.27 kg CO₂e/egg",
+  "co2e_summary": "0.27 kg CO2e/egg",
   "efsa_claim_ref": "EFSA/CLAIM/2025/07",
   "issued_at": "2025-10-26T14:30:00Z",
 
-  "signature_payload": "FEG-2026-001|Omega-3 ≥ 250 mg/egg|261 mg/egg|0.27 kg CO₂e/egg",
-  "signature": "8a3e7f9b1c2d4e6f8a3e7f9b1c2d4e6f",
+  "signature_payload": "FEG-2026-001|261 mg/egg|0.27 kg CO2e/egg",
+
+  "data_hash": "31dd05629da17a0baeecac18d678a09b",
+  "signature": "f0ab9257d78341056693b652cb1b1a2dc497993b178b60022fbc6301b2eabe50",
   "valid_signature": true,
   "signer": "FeedOS Labs Oy (Digital Feed Operator)",
 
