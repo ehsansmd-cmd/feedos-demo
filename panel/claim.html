@@ -2,140 +2,110 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>FeedOS™ — Verification</title>
   <link rel="icon" href="../assets/logo.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
   <style>
-    :root{--green:#204F32;--bg:#eef3ef}
-    body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Ubuntu,Arial}
-    .wrap{max-width:900px;margin:28px auto;padding:0 16px}
-    .card{background:#fff;border-radius:18px;box-shadow:0 4px 20px rgba(0,0,0,.06);padding:22px}
-    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
-    .brand{display:flex;align-items:center;gap:10px;color:var(--green);font-weight:800}
-    .brand img{width:26px;height:26px;border-radius:6px}
-    .status{display:inline-block;border-radius:999px;padding:7px 10px;font-size:12px;margin-top:8px}
-    .ok{background:#e6f4ea;color:#1a7f41}
-    .bad{background:#fde8e8;color:#b42318}
-    .row{display:grid;grid-template-columns:260px 1fr;gap:24px}
-    .btn{background:#e7efe9;color:#204F32;border:0;border-radius:10px;padding:10px 12px;font-weight:700;margin-right:8px;cursor:pointer}
-    .btn.primary{background:#204F32;color:#fff}
-    .back{margin-top:16px;color:#204F32}
-    .muted{color:#5c6b62}
-    code{background:#f4f5f7;border-radius:8px;padding:3px 6px}
+    :root{--green:#204F32;--bg:#F4F7F4;--text:#1b3529;--muted:#607165}
+    body{margin:0;font-family:'Inter',sans-serif;background:var(--bg);}
+    main{max-width:900px;margin:24px auto;padding:0 16px;}
+    .card{background:#fff;border-radius:16px;box-shadow:0 3px 8px rgba(0,0,0,.05);padding:20px;}
+    h1{font-size:22px;margin:0 0 8px 0;color:var(--text);display:flex;align-items:center;gap:10px}
+    .badge{display:inline-block;background:#e6f1e9;color:#2a694a;border-radius:999px;padding:4px 10px;font-size:12px;font-weight:600}
+    .row{display:grid;grid-template-columns:220px 1fr;gap:20px;align-items:start;margin-top:12px}
+    .qr{border:1px solid #e1e6e2;border-radius:12px;padding:8px;display:flex;justify-content:center;align-items:center}
+    .meta b{color:var(--text)}
+    .actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+    .btn{background:#204F32;color:#fff;border:0;border-radius:8px;padding:8px 12px;font-weight:600;cursor:pointer}
+    .btn.ghost{background:#e6efe9;color:#204F32}
+    .foot{color:#607165;margin-top:14px}
   </style>
 </head>
 <body>
-  <div class="wrap">
+  <main>
     <div class="card">
-      <header>
-        <div class="brand"><img src="../assets/logo.png" alt="logo"> <span>FeedOS™ — Verification</span></div>
-        <button class="btn" onclick="location.href='/panel'">Back to panel</button>
-      </header>
+      <h1><img src="../assets/logo.png" width="24" height="24" alt="">FeedOS™ — Verification</h1>
+      <span id="sigBadge" class="badge">Loading…</span>
+      <p>Scan the QR or open the JSON to validate this claim token.</p>
 
-      <div id="statusBox"></div>
-
-      <p class="muted">Scan the QR or open the JSON to validate this claim token.</p>
-
-      <div class="row" style="margin-top:14px">
-        <canvas id="qrc" width="240" height="240" style="background:#fff;border-radius:12px"></canvas>
-        <div id="details"></div>
+      <div class="row">
+        <div class="qr"><canvas id="qr" width="180" height="180"></canvas></div>
+        <div class="meta" id="meta">
+          <!-- filled by JS -->
+        </div>
       </div>
 
-      <div style="margin-top:16px">
-        <button id="tamper" class="btn">Simulate Tamper</button>
-        <button id="download" class="btn">Download JSON</button>
-        <button id="copy" class="btn">Copy Link</button>
-        <a id="raw" class="btn" target="_blank">View raw dossier</a>
+      <div class="actions">
+        <button class="btn ghost" id="tamper">Simulate Tamper</button>
+        <button class="btn ghost" id="raw">Download JSON</button>
+        <button class="btn ghost" id="copy">Copy Link</button>
+        <button class="btn" id="dossier">View raw dossier</button>
+        <button class="btn" id="back">Back to panel</button>
       </div>
 
-      <div class="muted" style="margin-top:16px">FeedOS Claim Standard (FCS™) — digitally signed mock certificate for demonstration purposes. Demo — data are simulated.</div>
+      <div class="foot">FeedOS Claim Standard (FCS™) — digitally signed mock certificate for demonstration purposes. Demo — data are simulated.</div>
     </div>
-  </div>
+  </main>
 
   <script>
-    // Simple auth gate (optional – می‌تونی برداری اگر نمی‌خوای الزام لاگین داشته باشه)
-    if (localStorage.getItem('feedos_auth') !== 'ok') {
-      window.location.href = '/login';
-    }
+    // Auth guard (مثل پنل)
+    if (localStorage.getItem('feedos_auth') !== 'ok') { window.location.href = '/login'; }
 
     const qs = new URLSearchParams(location.search);
-    const token = qs.get('token') || localStorage.getItem('feedos_selected_token');
-    if(!token){ alert('Missing token'); location.href='/panel'; }
+    const token = qs.get('token') || 'clm_demo_001'; // fallback
 
-    const $ = s => document.querySelector(s);
+    // مسیر JSON: /dossier/claim_<token>.json
+    const jsonPath = `/dossier/claim_${token}.json`;
 
-    async function loadBatchByToken(tok){
-      const r = await fetch('/data/batches.json');
+    async function loadClaim() {
+      const r = await fetch(jsonPath + '?_t=' + Date.now());
       const j = await r.json();
-      return (j.batches||[]).find(b => b.token===tok);
-    }
 
-    async function load(){
-      const b = await loadBatchByToken(token);
-      if(!b){ alert('Unknown token'); location.href='/panel'; return; }
+      // Badge وضعیت
+      const badge = document.getElementById('sigBadge');
+      if (j.valid_signature) {
+        badge.textContent = 'Signature Valid — Machine-verifiable claim';
+        badge.style.background = '#e6f1e9'; badge.style.color = '#2a694a';
+      } else {
+        badge.textContent = 'Signature Invalid — Signature Mismatch';
+        badge.style.background = '#fde6e6'; badge.style.color = '#b12b2b';
+      }
 
-      // Load dossier
-      const r = await fetch('/'+b.dossier_json);
-      if(!r.ok){ alert('Cannot load dossier'); return; }
-      const d = await r.json();
-
-      // Status
-      const ok = !!d.valid_signature;
-      $('#statusBox').innerHTML =
-        `<span class="status ${ok?'ok':'bad'}">${ok?'Signature Valid — Machine-verifiable claim':'Signature Invalid — Signature Mismatch'}</span>`;
-
-      // QR
-      const qrLink = `${location.origin}/panel/claim.html?token=${encodeURIComponent(token)}`;
-      const canvas = $('#qrc');
-      await QRCode.toCanvas(canvas, qrLink, {margin:1,width:240});
-
-      // Details
-      const lines = [
-        ['Batch:', d.batch_id],
-        ['Nutrient Target:', d.nutrient_target],
-        ['Verified Result:', d.verified_result + (ok ? '' : ' (Tampered)')],
-        ['CO₂e Summary:', d.co2_summary],
-        ['EFSA Ref:', d.efsa_claim_ref],
-        ['Issued at:', d.issued_at],
-        ['Signer:', d.signer]
-      ].map(([k,v])=>`<p><b>${k}</b> ${v}</p>`).join('');
-
-      $('#details').innerHTML = `
-        ${lines}
-        <p>API: <a href="/${b.dossier_json}" target="_blank">Open JSON</a></p>
-        <p>Signature: <code>${d.signature}</code></p>
+      // متادیتا
+      const meta = document.getElementById('meta');
+      meta.innerHTML = `
+        <p><b>Batch:</b> ${j.batch_id}</p>
+        <p><b>Nutrient Target:</b> ${j.nutrient_target}</p>
+        <p><b>Verified Result:</b> ${j.verified_result}${j.valid_signature ? '' : ' <i>(Tampered)</i>'}</p>
+        <p><b>CO₂e Summary:</b> ${j.co2_summary}</p>
+        <p><b>EFSA Ref:</b> ${j.efsa_claim_ref}</p>
+        <p><b>Issued at:</b> ${j.issued_at}</p>
+        <p><b>Signer:</b> ${j.signer}</p>
+        <p><b>API:</b> <a href="${jsonPath}" target="_blank">Open JSON</a></p>
+        <p><b>Signature:</b> ${j.signature}</p>
       `;
 
-      // Buttons
-      $('#raw').href = '/'+b.dossier_json;
-      $('#copy').onclick = async ()=>{ await navigator.clipboard.writeText(qrLink); alert('Link copied'); };
+      // QR: لینک همین صفحه با توکن
+      const link = location.origin + `/panel/claim.html?token=${encodeURIComponent(token)}`;
+      QRCode.toCanvas(document.getElementById('qr'), link, {width:180}, (err)=>{ if(err) console.error(err); });
 
-      // Tamper simulation: فقط متن result را دستکاری می‌کنیم (سمت کلاینت)
-      let tampered = false;
-      $('#tamper').onclick = ()=>{
-        tampered = !tampered;
-        const el = $('#details');
-        if(tampered){
-          el.innerHTML = el.innerHTML.replace(d.verified_result, '999 mg/egg');
-          $('#statusBox').innerHTML = `<span class="status bad">Signature Invalid — Signature Mismatch</span>`;
-          $('#tamper').textContent = 'Revert';
-        }else{
-          load(); // ری‌لود امن
-        }
-      };
+      // دکمه‌ها
+      document.getElementById('raw').onclick   = ()=> window.open(jsonPath,'_blank');
+      document.getElementById('copy').onclick  = async ()=> { await navigator.clipboard.writeText(link); alert('Link copied'); };
+      document.getElementById('dossier').onclick = ()=> window.open(jsonPath,'_blank');
+      document.getElementById('back').onclick  = ()=> history.back();
 
-      // Download JSON
-      $('#download').onclick = ()=>{
-        const a=document.createElement('a');
-        a.href='/'+b.dossier_json; a.download=b.dossier_json.split('/').pop();
-        a.click();
+      // Tamper: فقط result را عوض می‌کنیم و badge قرمز می‌شود (نمایشی)
+      document.getElementById('tamper').onclick = ()=>{
+        badge.textContent = 'Signature Invalid — Signature Mismatch';
+        badge.style.background = '#fde6e6'; badge.style.color = '#b12b2b';
+        meta.querySelectorAll('p')[2].innerHTML = `<b>Verified Result:</b> 999 mg/egg <i>(Tampered)</i>`;
       };
     }
-    load();
+
+    loadClaim();
   </script>
 </body>
 </html>
