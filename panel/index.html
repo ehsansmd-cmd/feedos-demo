@@ -78,7 +78,7 @@ canvas{width:100%;height:280px}
 // fetch mock data every few seconds
 async function fetchTelemetry(){
   try {
-    const res = await fetch('/data/mock_telemetry.json?_=' + Date.now());
+    const res = await fetch('/mock_telemetry.json?_=' + Date.now());
     const js = await res.json();
     updateTelemetry(js);
   } catch(err){ console.error('Fetch failed',err); }
