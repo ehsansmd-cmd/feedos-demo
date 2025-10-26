@@ -1,17 +1,10 @@
 {
-  "site_id": "site-fi-001",
-  "points": [
-    {"ts_utc":"2025-10-22T08:00:00Z","device_id":"dev-001","batch_id":"FEG-2026-001","metrics":{"temp_c":21.4,"rh_pct":57.0,"nh3_ppm":7.8,"co2_ppm":910,"water_lpm":12.1}},
-    {"ts_utc":"2025-10-22T08:10:00Z","device_id":"dev-001","batch_id":"FEG-2026-001","metrics":{"temp_c":21.2,"rh_pct":56.2,"nh3_ppm":8.1,"co2_ppm":980,"water_lpm":11.7}},
-    {"ts_utc":"2025-10-22T08:20:00Z","device_id":"dev-001","batch_id":"FEG-2026-001","metrics":{"temp_c":20.9,"rh_pct":55.5,"nh3_ppm":8.9,"co2_ppm":1020,"water_lpm":12.9}},
-    {"ts_utc":"2025-10-22T08:30:00Z","device_id":"dev-001","batch_id":"FEG-2026-001","metrics":{"temp_c":21.0,"rh_pct":54.8,"nh3_ppm":7.2,"co2_ppm":860,"water_lpm":13.0}},
-    {"ts_utc":"2025-10-22T08:40:00Z","device_id":"dev-001","batch_id":"FEG-2026-001","metrics":{"temp_c":21.6,"rh_pct":55.9,"nh3_ppm":8.5,"co2_ppm":935,"water_lpm":12.4}},
-    {"ts_utc":"2025-10-22T08:50:00Z","device_id":"dev-001","batch_id":"FEG-2026-001","metrics":{"temp_c":22.0,"rh_pct":57.1,"nh3_ppm":9.1,"co2_ppm":1040,"water_lpm":11.8}},
-    {"ts_utc":"2025-10-22T09:00:00Z","device_id":"dev-001","batch_id":"FEG-2026-001","metrics":{"temp_c":21.7,"rh_pct":56.3,"nh3_ppm":8.0,"co2_ppm":990,"water_lpm":12.6}},
-    {"ts_utc":"2025-10-22T09:10:00Z","device_id":"dev-001","batch_id":"FEG-2026-001","metrics":{"temp_c":21.1,"rh_pct":55.4,"nh3_ppm":7.6,"co2_ppm":920,"water_lpm":12.9}},
-    {"ts_utc":"2025-10-22T09:20:00Z","device_id":"dev-001","batch_id":"FEG-2026-001","metrics":{"temp_c":20.8,"rh_pct":54.9,"nh3_ppm":8.3,"co2_ppm":970,"water_lpm":12.2}},
-    {"ts_utc":"2025-10-22T09:30:00Z","device_id":"dev-001","batch_id":"FEG-2026-001","metrics":{"temp_c":21.3,"rh_pct":55.8,"nh3_ppm":7.9,"co2_ppm":915,"water_lpm":12.7}},
-    {"ts_utc":"2025-10-22T09:40:00Z","device_id":"dev-001","batch_id":"FEG-2026-001","metrics":{"temp_c":21.5,"rh_pct":56.6,"nh3_ppm":8.7,"co2_ppm":995,"water_lpm":11.9}},
-    {"ts_utc":"2025-10-22T09:50:00Z","device_id":"dev-001","batch_id":"FEG-2026-001","metrics":{"temp_c":21.0,"rh_pct":55.2,"nh3_ppm":7.4,"co2_ppm":900,"water_lpm":12.5}}
-  ]
+  "timestamp": "2025-10-26T09:00:00Z",
+  "batch_id": "FEG-2026-001",
+  "sensors": {
+    "temperature": [21.1, 21.3, 21.0, 20.9, 21.7, 21.9, 21.5, 20.8],
+    "humidity": [56.8, 57.1, 55.9, 56.2, 55.8, 57.3, 56.6, 55.4],
+    "co2": [945, 950, 960, 953, 972, 980, 968, 955],
+    "nh3": [8.7, 9.0, 8.9, 9.2, 8.8, 9.3, 9.1, 8.9]
+  }
 }
