@@ -8,10 +8,11 @@
 
   "signature_payload": "FEG-2026-001|261 mg/egg|0.27 kg CO2e/egg",
   "signature": "f0ab9257d78341056693b652cb1b1a2dc497993b178b60022fbc6301b2eabe50",
-  "integrity_hash": "31dd05629da17a0baeecac18d678a09b",
   "valid_signature": true,
   "signer": "FeedOS Labs Oy (Digital Feed Operator)",
 
   "claim_token": "clm_demo_001",
-  "qr_link": "https://feedos-demo.vercel.app/panel/claim.html?token=clm_demo_001"
+  "qr_link": "https://feedos-demo.vercel.app/panel/claim.html?token=clm_demo_001",
+
+  "integrity_hash": "31dd05629da17a0baeecac18d678a09b"
 }
