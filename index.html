@@ -4,43 +4,58 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>FeedOS™ — The AI Platform for Sustainable Protein Farming</title>
+
+  <!-- Brand fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Favicon (put assets/favicon.png in repo) -->
+  <link rel="icon" type="image/png" href="./assets/favicon.png"/>
+
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
   <style>
-    /* Brand Palette */
     :root{
       --primary:#204F32;          /* Primary Green */
       --accent:#8BF35A;           /* Accent Lime */
       --secondary:#2E7D50;        /* Secondary Deep Green */
-      --text:#22302A;             /* Core Text Color */
+      --text:#22302A;             /* Core Text */
       --muted:#5A6B62;            /* Grey-Green */
-      --bg:#F4F7F5;               /* Background Base */
+      --bg:#F4F7F5;               /* Background */
       --card:#fff;
       --shadow:0 8px 30px rgba(0,0,0,.06);
+      --border:#e5eee9;
     }
     *{box-sizing:border-box}
     body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto;background:var(--bg);color:var(--text)}
-    header{padding:18px 0;border-bottom:1px solid #e7ece9;background:#fff;position:sticky;top:0;z-index:10}
+    /* Header */
+    header{padding:18px 0;border-bottom:1px solid var(--border);background:#fff;position:sticky;top:0;z-index:10}
     .container{max-width:1100px;margin:0 auto;padding:0 20px}
     .brandwrap{display:flex;gap:12px;align-items:center}
-    .brandwrap img{width:40px;height:40px;border-radius:10px}
+    .brandwrap img{width:44px;height:44px;border-radius:10px;object-fit:contain}
     .brandtitle{display:flex;flex-direction:column}
-    .brandtitle .name{font-family:'EB Garamond',serif;font-weight:700;font-size:24px;color:var(--primary);letter-spacing:.2px}
+    .brandtitle .name{font-family:'EB Garamond',serif;font-weight:700;font-size:26px;color:var(--primary);letter-spacing:.2px;line-height:1.1}
     .brandtitle .tag{color:var(--muted);font-size:12.5px}
-    .actions{display:flex;gap:10px}
+    .actions{display:flex;gap:10px;flex-wrap:wrap}
     a.cta{appearance:none;text-decoration:none;background:var(--secondary);color:#fff;padding:10px 14px;border-radius:10px;font-weight:600;border:1px solid #1e5c3b}
-    a.cta.alt{background:var(--primary)}
+    a.cta.alt{background:var(--primary);border-color:#153823}
+
+    /* Main */
     main.container{padding:22px 20px}
     .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
-    .kpi{background:#fff;border-radius:14px;padding:14px 16px;border:1px solid #e5eee9;box-shadow:var(--shadow)}
+    .kpi{background:#fff;border-radius:14px;padding:14px 16px;border:1px solid var(--border);box-shadow:var(--shadow)}
     .kpi .label{color:var(--muted);font-size:12px}
     .kpi .value{font-weight:700;font-size:20px;margin-top:4px}
+
     .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-    .card{background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:18px;border:1px solid #e5eee9}
+    .card{background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:18px;border:1px solid var(--border)}
     .row{display:flex;align-items:center;justify-content:space-between;gap:12px}
     .pill{display:inline-block;padding:4px 10px;border-radius:999px;background:#e6f7ea;color:var(--primary);font-weight:600;font-size:12px;border:1px solid #cdebd7}
+    h3.title{margin:0;color:var(--primary);font-family:'EB Garamond',serif}
+
     footer{margin:26px 0 10px;color:var(--muted);font-size:12px;text-align:center}
+
     @media (max-width:860px){
       .kpis{grid-template-columns:1fr 1fr}
       .grid{grid-template-columns:1fr}
@@ -48,6 +63,7 @@
   </style>
 </head>
 <body>
+  <!-- Header -->
   <header>
     <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
       <div class="brandwrap">
@@ -64,7 +80,9 @@
     </div>
   </header>
 
+  <!-- Main -->
   <main class="container">
+    <!-- KPI cards -->
     <div class="kpis">
       <div class="kpi"><div class="label">Current Batch</div><div class="value" id="batchId">—</div></div>
       <div class="kpi"><div class="label">Uptime (24h)</div><div class="value" id="uptime">—</div></div>
@@ -72,28 +90,30 @@
       <div class="kpi"><div class="label">NH₃ Peak (ppm)</div><div class="value" id="peakNh3">—</div></div>
     </div>
 
+    <!-- Charts -->
     <div class="grid">
       <div class="card">
-        <div class="row"><h3 style="margin:0;color:var(--primary);font-family:'EB Garamond',serif">Temperature (°C)</h3><span class="pill">Sensor: dev-001</span></div>
+        <div class="row"><h3 class="title">Temperature (°C)</h3><span class="pill">Sensor: dev-001</span></div>
         <canvas id="tempChart" height="180"></canvas>
       </div>
       <div class="card">
-        <div class="row"><h3 style="margin:0;color:var(--primary);font-family:'EB Garamond',serif">Relative Humidity (%)</h3><span class="pill">Sensor: dev-001</span></div>
+        <div class="row"><h3 class="title">Relative Humidity (%)</h3><span class="pill">Sensor: dev-001</span></div>
         <canvas id="rhChart" height="180"></canvas>
       </div>
       <div class="card">
-        <div class="row"><h3 style="margin:0;color:var(--primary);font-family:'EB Garamond',serif">Ammonia NH₃ (ppm)</h3><span class="pill">Sensor: dev-001</span></div>
+        <div class="row"><h3 class="title">Ammonia NH₃ (ppm)</h3><span class="pill">Sensor: dev-001</span></div>
         <canvas id="nh3Chart" height="180"></canvas>
       </div>
       <div class="card">
-        <div class="row"><h3 style="margin:0;color:var(--primary);font-family:'EB Garamond',serif">CO₂ (ppm)</h3><span class="pill">Sensor: dev-001</span></div>
+        <div class="row"><h3 class="title">CO₂ (ppm)</h3><span class="pill">Sensor: dev-001</span></div>
         <canvas id="co2Chart" height="180"></canvas>
       </div>
     </div>
 
+    <!-- About -->
     <div class="card" style="margin-top:20px;">
       <div class="row">
-        <h3 style="margin:0;color:var(--primary);font-family:'EB Garamond',serif">About this Demo</h3>
+        <h3 class="title">About this Demo</h3>
         <span class="pill">Telemetry → FCS™ → Verification</span>
       </div>
       <ol style="margin-top:8px;color:var(--muted)">
@@ -102,64 +122,81 @@
         <li><strong style="color:var(--text)">Verification UI</strong>: <a href="./claim.html?token=clm_demo_001">QR page</a> renders batch details & validity.</li>
       </ol>
     </div>
+
     <footer>
       Demo for Business Finland Evaluation (Oct 2025). Palette: Primary #204F32, Accent #8BF35A.
     </footer>
   </main>
 
+  <!-- Scripts -->
   <script>
     async function main(){
-      const res = await fetch('./data/mock_telemetry.json');
-      const data = await res.json();
-      const pts = data.points;
-      const labels = pts.map(p => new Date(p.ts_utc));
-      const temp = pts.map(p => p.metrics.temp_c);
-      const rh   = pts.map(p => p.metrics.rh_pct);
-      const nh3  = pts.map(p => p.metrics.nh3_ppm);
-      const co2  = pts.map(p => p.metrics.co2_ppm);
+      try{
+        const res = await fetch('./data/mock_telemetry.json');
+        const data = await res.json();
+        const pts = data.points || [];
 
-      document.getElementById('batchId').textContent = pts[0]?.batch_id ?? '—';
-      const uptime = 98.0 + Math.random()*1.0; // demo
-      document.getElementById('uptime').textContent = uptime.toFixed(1) + '%';
-      const avgCo2 = co2.reduce((a,b)=>a+b,0)/co2.length;
-      const peakNh3 = Math.max(...nh3);
-      document.getElementById('avgCo2').textContent = Math.round(avgCo2);
-      document.getElementById('peakNh3').textContent = peakNh3.toFixed(1);
+        // 1) Labels as strings (no time adapter needed)
+        const labels = pts.map(p => {
+          const d = new Date(p.ts_utc);
+          const hh = String(d.getUTCHours()).padStart(2,'0');
+          const mm = String(d.getUTCMinutes()).padStart(2,'0');
+          return `${hh}:${mm} UTC`;
+        });
 
-      const common = {
-        type:'line',
-        options:{
-          responsive:true, animation:false,
-          scales:{
-            x:{ ticks:{ maxTicksLimit:6 }, type:'time', time:{ unit:'hour' } }
-          },
-          plugins:{ legend:{ display:false } },
-          elements:{ point:{ radius:0 } }
-        }
-      };
+        // 2) Series
+        const temp = pts.map(p => p.metrics.temp_c);
+        const rh   = pts.map(p => p.metrics.rh_pct);
+        const nh3  = pts.map(p => p.metrics.nh3_ppm);
+        const co2  = pts.map(p => p.metrics.co2_ppm);
 
-      new Chart(document.getElementById('tempChart'), { ...common, data:{ labels, datasets:[{ data: temp }] }});
-      new Chart(document.getElementById('rhChart'),   { ...common, data:{ labels, datasets:[{ data: rh }] }});
-      new Chart(document.getElementById('nh3Chart'),  { ...common, data:{ labels, datasets:[{ data: nh3 }] }});
-      new Chart(document.getElementById('co2Chart'),  { ...common, data:{ labels, datasets:[{ data: co2 }] }});
+        // 3) KPIs
+        document.getElementById('batchId').textContent = pts[0]?.batch_id ?? 'FEG-2026-001';
+        document.getElementById('uptime').textContent  = '99.8%';
+        const avgCo2 = Math.round(co2.reduce((a,b)=>a+b,0)/Math.max(co2.length,1));
+        const peakNh3 = nh3.length ? Math.max(...nh3) : 0;
+        document.getElementById('avgCo2').textContent  = isFinite(avgCo2)? avgCo2 : '—';
+        document.getElementById('peakNh3').textContent = isFinite(peakNh3)? peakNh3.toFixed(1) : '—';
+
+        // 4) Charts (category x-axis)
+        const baseOpts = {
+          type:'line',
+          options:{
+            responsive:true, animation:false,
+            scales:{ x:{ ticks:{ maxTicksLimit:6 } }, y:{ beginAtZero:false } },
+            plugins:{ legend:{ display:false } },
+            elements:{ point:{ radius:0 } }
+          }
+        };
+        new Chart(document.getElementById('tempChart'), { ...baseOpts, data:{ labels, datasets:[{ data: temp }] }});
+        new Chart(document.getElementById('rhChart'),   { ...baseOpts, data:{ labels, datasets:[{ data: rh }] }});
+        new Chart(document.getElementById('nh3Chart'),  { ...baseOpts, data:{ labels, datasets:[{ data: nh3 }] }});
+        new Chart(document.getElementById('co2Chart'),  { ...baseOpts, data:{ labels, datasets:[{ data: co2 }] }});
+
+        // 5) Simple live simulation for two KPIs (visual heartbeat)
+        const mockStream = [
+          { co2: avgCo2 + 12, nh3: (peakNh3 + 0.3) },
+          { co2: avgCo2 - 8,  nh3: (peakNh3 - 0.4) },
+          { co2: avgCo2 + 5,  nh3: (peakNh3 + 0.1) },
+          { co2: avgCo2 - 3,  nh3: (peakNh3 - 0.2) }
+        ];
+        let idx = 0;
+        setInterval(()=>{
+          const m = mockStream[idx];
+          document.getElementById('avgCo2').textContent  = Math.round(m.co2);
+          document.getElementById('peakNh3').textContent = m.nh3.toFixed(1);
+          idx = (idx + 1) % mockStream.length;
+        }, 5000);
+
+      }catch(e){
+        console.error('Telemetry load error:', e);
+        // Fail-safe UI
+        document.getElementById('uptime').textContent = '—';
+        document.getElementById('avgCo2').textContent = '—';
+        document.getElementById('peakNh3').textContent = '—';
+      }
     }
     main();
   </script>
-  <script>
-// simple live simulation for two KPIs
-const mockStream = [
-  { co2: 940, nh3: 8.9 },
-  { co2: 965, nh3: 9.3 },
-  { co2: 920, nh3: 8.2 },
-  { co2: 955, nh3: 9.0 }
-];
-let idx = 0;
-setInterval(()=>{
-  const m = mockStream[idx];
-  document.getElementById('avgCo2').textContent = m.co2.toString();
-  document.getElementById('peakNh3').textContent = m.nh3.toFixed(1);
-  idx = (idx + 1) % mockStream.length;
-}, 5000);
-</script>
 </body>
 </html>
