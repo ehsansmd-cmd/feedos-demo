@@ -1,0 +1,24 @@
+{
+  "meta": {
+    "id": "sample-001",
+    "issued_at": "2025-10-28T09:00:00Z",
+    "issuer": "FeedOS Evidence Compiler (Demo)",
+    "algo": "HMAC-SHA256"
+  },
+  "payload": {
+    "farm_id": "FI-DEMO-1001",
+    "batch_id": "B-2025-10-001",
+    "species": "broiler",
+    "age_days": 32,
+    "avg_weight_kg": 1.9,
+    "mortality_pct": 2.1,
+    "ammonia_ppm": 14,
+    "co2_ppm": 1800,
+    "feed_conversion": 1.57,
+    "period_start": "2025-09-25",
+    "period_end": "2025-10-27",
+    "method": "FeedOS v0.2 Evidence Compiler"
+  },
+  "canonical": "{\"age_days\":32,\"ammonia_ppm\":14,\"avg_weight_kg\":1.9,\"batch_id\":\"B-2025-10-001\",\"co2_ppm\":1800,\"farm_id\":\"FI-DEMO-1001\",\"feed_conversion\":1.57,\"method\":\"FeedOS v0.2 Evidence Compiler\",\"mortality_pct\":2.1,\"period_end\":\"2025-10-27\",\"period_start\":\"2025-09-25\",\"species\":\"broiler\"}",
+  "signature": "747ef6d2eccd80fd92c473f48c5b43f7799a2e3555d0e05c875ae1d6dcc9f5d8"
+}
