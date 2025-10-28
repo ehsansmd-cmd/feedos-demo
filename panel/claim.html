@@ -7,261 +7,137 @@
   <link rel="icon" href="/assets/logo.png">
   <style>
     :root{
-      --bg:#eef4ef;
-      --card:#ffffff;
-      --muted:#6a7c6f;
-      --text:#1d2a22;
-      --ok:#dff2e1;
-      --ok-text:#23683d;
-      --bad:#fde8e8;
-      --bad-text:#8c2626;
-      --btn:#2f6b49;
-      --btn-hover:#285c3f;
-      --pill:#e8efe8;
-      --border:#e6ece7;
+      --bg:#eef4ef; --card:#ffffff; --muted:#6a7c6f; --text:#1d2a22;
+      --ok:#dff2e1; --ok-text:#23683d; --bad:#fde8e8; --bad-text:#8c2626;
+      --btn:#2f6b49; --btn-hover:#285c3f; --pill:#e8efe8; --border:#e6ece7;
     }
     *{box-sizing:border-box}
-    body{
-      margin:0; font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;
-      background:var(--bg); color:var(--text);
-    }
+    body{ margin:0; font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial; background:var(--bg); color:var(--text); }
     .container{ max-width:980px; margin:32px auto; padding:0 16px; }
     header{ display:flex; align-items:center; gap:12px; margin-bottom:16px; }
     header .brand{ display:flex; align-items:center; gap:10px; font-weight:700; font-size:18px; }
     header .brand img{ width:28px; height:28px; border-radius:6px }
-    .card{
-      background:var(--card); border-radius:14px; padding:18px;
-      box-shadow:0 6px 18px rgba(0,0,0,.04); border:1px solid var(--border);
-    }
+    .card{ background:var(--card); border-radius:14px; padding:18px; box-shadow:0 6px 18px rgba(0,0,0,.04); border:1px solid var(--border); }
     .badge{ display:inline-block; padding:8px 12px; border-radius:999px; font-size:14px; font-weight:600; }
-    .badge.ok{ background:var(--ok); color:var(--ok-text) }
-    .badge.bad{ background:var(--bad); color:var(--bad-text) }
+    .ok{ background:var(--ok); color:var(--ok-text) }
+    .bad{ background:var(--bad); color:var(--bad-text) }
     .grid{ display:grid; grid-template-columns:240px 1fr; gap:24px; margin-top:16px; }
-    .qr-box{
-      width:100%; aspect-ratio:1/1; border-radius:12px; background:#f5f7f5;
-      display:flex; align-items:center; justify-content:center; border:1px dashed var(--border); overflow:hidden;
-    }
-    .qr-box img{ width:100%; height:100%; object-fit:cover }
-    .kv{ line-height:1.9 }
-    .kv dt{ font-weight:700 }
-    .kv dd{ margin:0 0 8px 0; color:#2d3a32 }
+    .qr-box{ width:100%; aspect-ratio:1/1; border-radius:12px; background:#f5f7f5; display:flex; align-items:center; justify-content:center; border:1px dashed var(--border); overflow:hidden; }
+    .kv{ line-height:1.9 } .kv dt{ font-weight:700 } .kv dd{ margin:0 0 8px 0; color:#2d3a32 }
     .row{ display:flex; flex-wrap:wrap; gap:10px; margin-top:18px }
-    .btn{
-      appearance:none; border:0; border-radius:10px; padding:10px 14px; font-weight:600; cursor:pointer;
-      background:var(--btn); color:#fff;
-    }
-    .btn.secondary{ background:#e9efe9; color:#1f2b24 }
-    .btn:hover{ background:var(--btn-hover) }
-    .btn.secondary:hover{ background:#dde6de }
+    .btn{ appearance:none; border:0; border-radius:10px; padding:10px 14px; font-weight:600; cursor:pointer; background:var(--btn); color:#fff; }
+    .btn.secondary{ background:#e9efe9; color:#1f2b24 } .btn:hover{ background:var(--btn-hover) } .btn.secondary:hover{ background:#dde6de }
     .footer-note{ color:var(--muted); margin-top:18px; font-size:14px; text-align:center }
-    .topbar{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px; }
-    .pill{ background:var(--pill); color:#2a3a30; border-radius:999px; padding:8px 12px; font-weight:600 }
     @media (max-width:800px){ .grid{ grid-template-columns:1fr; } }
     a.link{ color:#245e3d; text-decoration:underline; font-weight:600 }
-
-    /* tiny check list */
     .checks{ margin-top:12px; padding-left:18px; line-height:1.8 }
-    .muted{ color:var(--muted) }
     code.hash{ background:#f3f5f3; padding:2px 6px; border-radius:6px; font-size:12px }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <div class="brand">
-        <img src="/assets/logo.png" alt="FeedOS logo">
-        <span>FeedOS™ — Verification</span>
-      </div>
-      <span id="sigBadge" class="badge muted" style="margin-left:8px;">Checking…</span>
-      <div style="margin-left:auto">
-        <a href="/panel" class="btn secondary">Back to panel</a>
-      </div>
+      <div class="brand"><img src="/assets/logo.png" alt="logo"><span>FeedOS™ — Verification</span></div>
+      <span id="sigBadge" class="badge" style="margin-left:8px;">Checking…</span>
+      <div style="margin-left:auto"><a href="/" class="btn secondary">Home</a></div>
     </header>
 
     <div class="card">
-      <div class="topbar">
-        <span class="pill">Scan the QR or open the JSON to validate this claim token.</span>
-        <div class="row">
-          <button id="tamperBtn" class="btn secondary">Simulate Tamper</button>
-          <a id="dlBtn" class="btn secondary" download>Download JSON</a>
-          <button id="copyBtn" class="btn secondary">Copy Link</button>
-          <a id="rawBtn" class="btn secondary" target="_blank" rel="noopener">View raw dossier</a>
-        </div>
+      <div class="topbar" style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+        <div><b id="claimId">Claim sample-001</b></div>
+        <span class="pill" style="background:var(--pill); padding:8px 12px; border-radius:999px; font-weight:600;">FCS — Demo</span>
       </div>
 
       <div class="grid">
-        <div class="qr-box">
-          <img id="qrImg" alt="Claim QR" />
+        <div>
+          <div class="qr-box"><img id="qrImg" alt="QR"/></div>
+          <div class="row">
+            <button id="verifyBtn" class="btn">Verify signature</button>
+            <button id="tamperBtn" class="btn secondary">Simulate tamper</button>
+            <button id="copyBtn" class="btn secondary">Copy Link</button>
+          </div>
         </div>
-
         <div>
           <dl class="kv">
-            <dt>Batch:</dt><dd id="batch">—</dd>
-            <dt>Nutrient Target:</dt><dd id="target">—</dd>
-            <dt>Verified Result:</dt><dd id="result">—</dd>
-            <dt>CO₂e Summary:</dt><dd id="co2e">—</dd>
-            <dt>EFSA Ref:</dt><dd id="efsa">—</dd>
-            <dt>Issued at:</dt><dd id="issued">—</dd>
-            <dt>Signer:</dt><dd id="signer">—</dd>
-            <dt>API:</dt><dd><a id="openJson" class="link" target="_blank" rel="noopener">Open JSON</a></dd>
-            <dt>Signature:</dt><dd id="sig" style="word-break:break-all;">—</dd>
-            <dt>Integrity hash:</dt><dd id="hash" class="muted"><code class="hash">—</code></dd>
+            <dt>Farm</dt><dd id="farm">–</dd>
+            <dt>Batch</dt><dd id="batch">–</dd>
+            <dt>Species</dt><dd id="species">–</dd>
+            <dt>KPIs</dt><dd><span id="kpi">–</span></dd>
+            <dt>Issued at</dt><dd id="issued">–</dd>
+            <dt>Signature</dt><dd><code id="sig" class="hash">–</code></dd>
           </dl>
+          <details style="margin-top:8px;">
+            <summary><b>Open payload JSON</b></summary>
+            <pre id="json" style="background:#f6f8f6; border:1px solid var(--border); padding:12px; border-radius:8px; overflow:auto; font-size:12px"></pre>
+          </details>
 
-          <ul class="checks">
-            <li id="c-int" class="muted">Calculating data integrity…</li>
-            <li id="c-sig" class="muted">Verifying certification signature…</li>
-          </ul>
+          <div class="checks">
+            <div id="c-int" class="muted">Canonical string present</div>
+            <div id="c-sig" class="muted">Verifying signature…</div>
+          </div>
+
+          <p class="footer-note">We are <b>not</b> a certification authority. FeedOS produces verifiable digital evidence; official certification is issued by an accredited third party.</p>
         </div>
-      </div>
-
-      <div class="footer-note">
-        FeedOS Claim Standard (FCS™) — digitally signed mock certificate for demonstration purposes. Demo — data are simulated.
       </div>
     </div>
   </div>
 
 <script>
-  /* ----------------------- CONFIG ----------------------- */
-  const DEMO_SECRET = 'demo_secret_key';         // mock HMAC key (client-side)
-  const DOSSIER_BASE = '/dossier';               // folder of JSON dossiers
-
-  /* ----------------------- HELPERS ---------------------- */
   const $ = (id)=>document.getElementById(id);
   const qp = new URLSearchParams(location.search);
-  const token = (qp.get('token') || 'clm_demo_001').trim();
-
-  const toHex = (buf)=>Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-  const enc = new TextEncoder();
+  const token = (qp.get('token') || 'sample-001').trim();
+  const claimIdEl = $('claimId');
 
   function setBadge(ok, msg){
     const el = $('sigBadge');
     el.className = 'badge ' + (ok ? 'ok' : 'bad');
     el.textContent = msg;
   }
-  function setChecks(intOK, sigOK){
-    $('c-int').textContent = intOK ? '✅ Data integrity check passed' : '❌ HASH MISMATCH — data tampered';
-    $('c-sig').textContent = sigOK ? '✅ Certification signature valid' : '❌ Invalid signature / authority mismatch';
-  }
-
-  // SHA-256 over critical fields (fixed order). Shorten to 32-hex for UI.
-  async function calcHash(d){
-    const payload = `${d.batch_id}|${d.verified_result}|${d.co2e_summary}`;
-    const digest = await crypto.subtle.digest('SHA-256', enc.encode(payload));
-    return toHex(digest).slice(0, 32);
-  }
-
-  // HMAC-SHA256 over (batch_id|issued_at) with DEMO_SECRET
-  async function expectedSignature(d){
-    const key = await crypto.subtle.importKey('raw', enc.encode(DEMO_SECRET), {name:'HMAC', hash:'SHA-256'}, false, ['sign']);
-    const msg = `${d.batch_id}|${d.issued_at}`;
-    const sig = await crypto.subtle.sign('HMAC', key, enc.encode(msg));
-    return toHex(sig);
-  }
-
-  // Normalize incoming JSON fields
-  function normalize(data){
-    return {
-      batch_id:        data.batch_id || data.batch || '—',
-      nutrient_target: data.nutrient_target || '—',
-      verified_result: data.verified_result || '—',
-      co2e_summary:    data.co2e_summary ?? data.co2_summary ?? '—',
-      efsa_claim_ref:  data.efsa_claim_ref || data.efsa_ref || '—',
-      issued_at:       data.issued_at || '—',
-      signer:          data.signer || 'FeedOS Labs Oy (Digital Feed Operator)',
-      signature:       data.signature || '—',
-      data_hash:       data.data_hash || null,
-      valid_signature: (typeof data.valid_signature === 'boolean') ? data.valid_signature : null,
-      claim_token:     data.claim_token || token
-    };
-  }
-
-  // Populate UI fields
-  function display(cd){
-    $('batch').textContent  = cd.batch_id;
-    $('target').textContent = cd.nutrient_target;
-    $('result').textContent = cd.verified_result;
-    $('co2e').textContent   = cd.co2e_summary;
-    $('efsa').textContent   = cd.efsa_claim_ref;
-    $('issued').textContent = cd.issued_at;
-    $('signer').textContent = cd.signer;
-    $('sig').textContent    = cd.signature || '—';
-
-    const jsonPath = `${DOSSIER_BASE}/claim_${cd.claim_token}.json`;
-    $('openJson').href = jsonPath;
-    $('rawBtn').href   = jsonPath;
-    $('dlBtn').href    = jsonPath;
-  }
-
-  // Re-run checks and refresh badges/lines
-  async function verifyAndRender(cd){
-    const calc = await calcHash(cd);
-    $('hash').innerHTML = `<code class="hash">${calc}</code>`;
-    const integrityOK = cd.data_hash ? (cd.data_hash === calc) : true;
-
-    const expectedSig = await expectedSignature(cd);
-    const signatureOK = integrityOK && (cd.signature === expectedSig);
-
-    setChecks(integrityOK, signatureOK);
-    setBadge(signatureOK,
-      signatureOK ? 'Signature Valid — Machine-verifiable claim'
-                  : 'Signature Invalid — Signature Mismatch'
-    );
-  }
-
-  /* ----------------------- LOAD ------------------------- */
-  const dossierPath = `${DOSSIER_BASE}/claim_${token}.json`;
-  let claimData = null;
-
-  // QR image points to this page (includes token)
-  (function initQR(){
-    const qrData = encodeURIComponent(location.href);
-    $('qrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=480x480&data=${qrData}`;
-  })();
 
   async function loadClaim(){
-    try{
-      let res = await fetch(dossierPath, {cache:'no-store'});
-      if(!res.ok) throw new Error('Dossier not found');
-      const raw = await res.json();
-      claimData = normalize(raw);
-      display(claimData);
-      await verifyAndRender(claimData);
-    }catch(e){
-      console.error(e);
-      setBadge(false, 'Error — Invalid token or dossier missing');
-      alert('Could not load dossier JSON. Check /dossier/claim_<token>.json');
-    }
+    claimIdEl.textContent = `Claim ${token}`;
+    const url = `/api/verify?id=${encodeURIComponent(token)}`;
+    const r = await fetch(url);
+    if(!r.ok){ setBadge(false, 'Not found'); return; }
+    const j = await r.json();
+    $('farm').textContent = j.payload.farm_id;
+    $('batch').textContent = j.payload.batch_id;
+    $('species').textContent = j.payload.species;
+    $('kpi').textContent = `FCR: ${j.payload.feed_conversion} | NH3: ${j.payload.ammonia_ppm}ppm | CO₂: ${j.payload.co2_ppm}ppm`;
+    $('issued').textContent = j.meta?.issued_at || '—';
+    $('sig').textContent = (j.signature || '').slice(0,16) + '…';
+    $('json').textContent = JSON.stringify(j.payload, null, 2);
+
+    // QR لینک به همین صفحه
+    const qrData = location.origin + `/claim?token=${encodeURIComponent(token)}`;
+    $('qrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=480x480&data=${encodeURIComponent(qrData)}`;
   }
 
-  /* --------------------- INTERACTIONS ------------------- */
+  async function verify(){
+    const r = await fetch(`/api/verify?mode=verify&id=${encodeURIComponent(token)}`);
+    const j = await r.json();
+    if(j.valid){ setBadge(true, 'Valid — signature OK'); document.getElementById('c-sig').textContent = 'Signature valid'; }
+    else      { setBadge(false,'Invalid — signature mismatch'); document.getElementById('c-sig').textContent = 'Signature invalid'; }
+  }
+
   function simulateTamper(){
-    if(!claimData) return;
-    const cd = {...claimData};
-    if(!/Tampered/i.test(cd.verified_result)){
-      cd.verified_result = `${cd.verified_result} (Tampered)`;
-    }else{
-      cd.verified_result = cd.verified_result.replace(/\s*\(Tampered\)\s*/i,'');
-    }
-    $('result').textContent = cd.verified_result;
-    verifyAndRender(cd);
+    setBadge(false, 'Invalid — payload tampered');
+    document.getElementById('c-sig').textContent = 'Signature invalid (tamper demo)';
   }
 
   async function copyLink(){
     try{
       await navigator.clipboard.writeText(location.href);
-      $('copyBtn').textContent = 'Copied!';
-      setTimeout(()=> $('copyBtn').textContent='Copy Link', 1200);
-    }catch{
-      alert('Copy failed — copy the URL from the address bar.');
-    }
+      document.getElementById('copyBtn').textContent = 'Copied!';
+      setTimeout(()=> document.getElementById('copyBtn').textContent='Copy Link', 1200);
+    }catch{ alert('Copy failed — copy the URL.'); }
   }
 
-  $('tamperBtn').addEventListener('click', simulateTamper);
-  $('copyBtn').addEventListener('click', copyLink);
+  document.getElementById('verifyBtn').addEventListener('click', verify);
+  document.getElementById('tamperBtn').addEventListener('click', simulateTamper);
+  document.getElementById('copyBtn').addEventListener('click', copyLink);
 
   loadClaim();
 </script>
 </body>
 </html>
-```0
