@@ -1,0 +1,8 @@
+[build]
+publish = "."
+
+[functions]
+node_bundler = "esbuild"
+external_node_modules = []
+# این خط تضمین می‌کند فایل‌های امضاشده داخل باندل فانکشن موجود باشند
+included_files = ["dossier/*.json"]
